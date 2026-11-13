@@ -542,7 +542,7 @@ document.addEventListener('DOMContentLoaded', async () => {
        m3.setPaintProperty('sel-ring','circle-radius',14+40*t2);
        m3.setPaintProperty('sel-ring','circle-opacity',.9*(1-t2));
        if(m3.getLayer('mask2'))m3.setPaintProperty('mask2','fill-opacity',.5+.5*Math.sin(ts/4200));
-       if(m3.getLayer('bld'))m3.setLight({anchor:'map',color:'#fff3df',intensity:.5,position:[1.2,205+45*Math.sin(ts/9000),42]});
+       if(m3.getLayer('bld'))m3.setLight({anchor:'map',color:'#fff3df',intensity:.62,position:[1.2,205+45*Math.sin(ts/9000),42]});
        
        m3.setPaintProperty('hill','hillshade-illumination-direction',290+55*Math.sin(ts/7000));
        if(swayOn)m3.setBearing(swayBase+7*Math.sin((ts-swayT0)/4800));
@@ -592,13 +592,19 @@ document.addEventListener('DOMContentLoaded', async () => {
      m3.addLayer({id:'mask2',type:'fill',source:'mask',paint:{'fill-pattern':'cloudB','fill-opacity':.5}},'b-glow');
      m3.addSource('ofm',{type:'vector',url:'https://tiles.openfreemap.org/planet',attribution:'OpenFreeMap © OpenMapTiles · Data © OpenStreetMap'});
      m3.addSource('pts',{type:'geojson',data:geo(),cluster:true,clusterRadius:42,clusterMaxZoom:10});
-     m3.addSource('beams',{type:'geojson',data:beams()});
-     m3.addLayer({id:'beams',type:'fill-extrusion',source:'beams',minzoom:8,maxzoom:13.4,paint:{'fill-extrusion-color':['get','color'],'fill-extrusion-height':['interpolate',['linear'],['zoom'],8,4500,11,1500,13,600],'fill-extrusion-base':0,'fill-extrusion-opacity':.62}});
-     m3.addLayer({id:'bld',type:'fill-extrusion',source:'ofm','source-layer':'building',minzoom:13.2,paint:{
-       'fill-extrusion-color':['interpolate',['linear'],['coalesce',['get','render_height'],7],0,'#f3e9d9',12,'#ebdfca',30,'#ddd6ca',80,'#c7ccd3'],
-       'fill-extrusion-height':['*',1.5,['coalesce',['get','render_height'],7]],
-       'fill-extrusion-base':['*',1.5,['coalesce',['get','render_min_height'],0]],
-       'fill-extrusion-opacity':.97,'fill-extrusion-vertical-gradient':true}});
+     const H=['coalesce',['get','render_height'],7],B=['coalesce',['get','render_min_height'],0];
+     m3.addLayer({id:'urban',type:'fill-extrusion',source:'ofm','source-layer':'landuse',minzoom:8.5,maxzoom:14.2,filter:['match',['get','class'],['residential','suburb','neighbourhood','commercial','retail','industrial'],true,false],paint:{
+       'fill-extrusion-color':['match',['get','class'],['commercial','retail'],'#e9c79a','industrial','#cfc6ba','#efdcc0'],
+       'fill-extrusion-height':14,'fill-extrusion-base':0,
+       'fill-extrusion-opacity':['interpolate',['linear'],['zoom'],8.5,0,10,.78,13,.78,14.2,0],'fill-extrusion-vertical-gradient':true}});
+     m3.addLayer({id:'bld',type:'fill-extrusion',source:'ofm','source-layer':'building',minzoom:13,paint:{
+       'fill-extrusion-color':['interpolate',['linear'],H,0,'#f6efe3',10,'#f0e6d4',25,'#e7e1d7',60,'#d8dee4',120,'#c8d2dc'],
+       'fill-extrusion-height':['*',1.25,H],'fill-extrusion-base':['*',1.25,B],
+       'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':true}});
+     m3.addLayer({id:'bld-roof',type:'fill-extrusion',source:'ofm','source-layer':'building',minzoom:13,paint:{
+       'fill-extrusion-color':['step',H,'#bcb4a7',5,'#c27b5b',10,'#ada79e',30,'#8c97a3'],
+       'fill-extrusion-height':['*',1.25,H],'fill-extrusion-base':['max',['*',1.25,B],['-',['*',1.25,H],.9]],
+       'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':false}});
      m3.addLayer({id:'pulse',type:'circle',source:'pts',filter:['!',['has','point_count']],paint:{'circle-color':['get','color'],'circle-radius':10,'circle-opacity':.4,'circle-pitch-alignment':'map','circle-pitch-scale':'map'}});
      m3.addLayer({id:'clusters',type:'circle',source:'pts',filter:['has','point_count'],paint:{'circle-color':'#15646a','circle-radius':['step',['get','point_count'],15,10,19,50,24,200,30],'circle-stroke-width':3,'circle-stroke-color':'#ffffffcc'}});
      m3.addLayer({id:'cluster-n',type:'symbol',source:'pts',filter:['has','point_count'],layout:{'text-field':['get','point_count_abbreviated'],'text-font':['Noto Sans Bold'],'text-size':12,'text-allow-overlap':true},paint:{'text-color':'#fff'}});
