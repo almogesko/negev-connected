@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="theme-color" content="#173e33">
+<title>מפת הדרום | מפת שותפים בנגב</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<link rel="stylesheet" href="site-theme.css">
+<style>
+:root{--bg:#f3f4ef;--ink:#152c27;--sub:#4e6259;--line:#dce3dc;--paper:#fff;--forest:#112d25;--green:#245842;--mint:#eaf4e9;--sand:#e9c889;--radius:21px;--soft:0 12px 36px #1937290c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--site-font);-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}a{color:var(--green)}button,input,select{font:inherit}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--site-focus);outline-offset:3px}
+.wrap{max-width:1450px;margin:auto;padding-inline:clamp(14px,3vw,42px)}
+.head{min-height:59px;display:flex;gap:12px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:9px;text-decoration:none;font-weight:760;color:#fff;font-size:.94rem}
+.brand b{display:grid;place-items:center;width:33px;height:33px;border:1px solid #ebcb8d80;border-radius:9px;color:var(--sand)}
+.brand svg,.back svg,.search-icon,.mapbuttons svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.back,.control,.chip,.jump,.source{min-height:44px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 12px;font-weight:700;cursor:pointer}
+.back{color:#e5ece7;text-decoration:none;font-size:.85rem}.back:hover{color:var(--sand)}
+.mast{position:relative;isolation:isolate;background:#173b2f;color:#fff;overflow:hidden}
+.mast .topo{position:absolute;inset:0 auto 0 0;height:100%;width:min(75%,980px);z-index:-1;color:#d3d9a7;opacity:.26;pointer-events:none;mask-image:linear-gradient(to right,#000 55%,transparent)}
+.intro{padding-block:24px 27px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px}
+.kicker{display:flex;align-items:center;gap:7px;font-weight:760;color:#efd198;font-size:.83rem;margin:0}
+.kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+h1{font-size:clamp(2.1rem,4.6vw,3.7rem);letter-spacing:-.045em;margin:4px 0 6px;line-height:1.04}
+h1 span{font-size:.62em;color:#d8e5d7;letter-spacing:-.02em;display:inline-block;margin-inline-start:10px}
+h2{margin:0;font-size:1.27rem;line-height:1.25;letter-spacing:-.02em}h3{margin:0;font-size:1rem;line-height:1.35}p{margin:0}
+.lead{color:#e4ece5;font-size:.94rem}
+.hero-stats{margin:0;display:flex;gap:10px;flex-shrink:0}
+.hero-stats div{background:#102e25ba;border:1px solid #d2dab340;border-radius:13px;padding:8px 14px;min-width:100px}
+.hero-stats dt{font-size:.72rem;color:#dce7db}
+.hero-stats dd{font-size:1.47rem;font-weight:820;letter-spacing:-.04em;color:#fff;margin:0;font-variant-numeric:tabular-nums;line-height:1.25}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(270px,325px);gap:18px;align-items:start;margin-block-start:19px}
+.layout>div{min-width:0}
+.panel{border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);box-shadow:var(--soft);overflow:hidden}
+.searchbox{padding:15px 15px 10px;border-bottom:1px solid var(--line)}
+.searchrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(135px,auto);gap:8px}
+.search-field{position:relative;min-width:0}
+.search-icon{position:absolute;inset-inline-start:12px;top:15px;color:var(--green);pointer-events:none}
+input,select{width:100%;min-width:0;min-height:46px;border:1px solid #cad7cb;border-radius:11px;background:#f8faf6;padding:6px 10px;color:var(--ink)}
+input{padding-inline-start:38px}
+select{cursor:pointer}
+.control,.chip{background:#fff;color:var(--ink);border:1px solid #ccd8cd;text-decoration:none}
+.control:hover,.chip:hover{background:#eef5ed}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-block-start:9px}
+.chip{min-height:40px;border-radius:999px;font-size:.82rem;padding:5px 9px}
+.chip[aria-pressed=true]{background:var(--green);color:#fff;border-color:var(--green)}
+.mapbar{padding:5px 14px;display:flex;gap:5px;justify-content:space-between;align-items:center;background:#f4f7f1}
+.mapbuttons{display:flex;gap:6px;align-items:center}.mapbar .control{font-size:.76rem;min-height:40px;border-color:transparent;background:transparent;padding:4px 6px;color:var(--green)}
+.mapbar .control:hover{background:#e7efe5}
+.count{font-size:.79rem;color:var(--sub);text-align:end;font-variant-numeric:tabular-nums}
+#map{height:clamp(390px,calc(100svh - 470px),660px);background:#e6ebe0;direction:ltr;isolation:isolate}
+#map:not(.leaflet-container){height:auto;min-height:80px;display:grid;place-items:center}
+#map .leaflet-tile-pane{filter:saturate(.67) contrast(.97)}
+#map .leaflet-control-zoom{border:1px solid #afbfaf;border-radius:12px;overflow:hidden;box-shadow:0 5px 16px #172a262b;margin:12px}
+#map .leaflet-control-zoom a{width:42px;height:42px;line-height:42px;color:var(--forest)}
+#map .leaflet-control-attribution{color:#263d32;background:#fffffff0}
+#map-status,.note{padding:10px 14px;color:var(--sub);font-size:.81rem}
+#map-status{background:#fff0d4;color:#70451a}
+.leaflet-popup-content-wrapper{border-radius:15px!important}
+.leaflet-popup-content{margin:12px 14px;direction:rtl;line-height:1.45;font-family:var(--site-font)}
+.leaflet-popup-content section+section{border-top:1px solid var(--line);padding-top:8px}
+.leaflet-popup-content strong{font-size:1rem}.leaflet-popup-content p{margin:.25em 0}
+.leaflet-popup-content a{display:inline-flex;align-items:center;min-height:44px}
+.pin{border:none;background:none}
+.symbol{display:inline-grid;place-items:center;width:22px;height:22px;min-width:22px;border-radius:6px;background:var(--pin);color:#fff;vertical-align:middle}
+.symbol svg{width:15px;height:15px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pin .symbol{width:32px;height:32px;border-radius:10px;border:2px solid white;box-shadow:0 2px 7px #142e2754}.pin .symbol svg{width:17px;height:17px}
+.pin .cluster{width:38px;height:38px;display:grid;place-items:center;border:2px solid white;border-radius:50%;color:white;background:#1d4839;box-shadow:0 0 0 3px #214b3c38,0 3px 9px #162e2866;font:800 11px Arial}
+.pin .cluster.large{background:#163b2f;box-shadow:0 0 0 5px #214b3c3c,0 3px 9px #162e2866}
+.pin small{position:absolute;top:-4px;right:-4px;background:#163b2f;color:white;border:1px solid white;border-radius:999px;min-width:16px;text-align:center;padding:1px 3px;font:700 9px Arial}
+.key{color:var(--sub);font-size:.81rem}.key summary{cursor:pointer;min-height:40px;line-height:40px;font-weight:750;color:var(--green)}
+.key[open]{margin-block-start:7px;border-block-start:1px solid var(--line)}
+.key ul{list-style:none;padding:0;margin:1px 0 10px;display:flex;gap:7px 13px;flex-wrap:wrap}.key li{display:flex;align-items:center;gap:5px}
+.sector-row{display:flex;align-items:center;gap:8px;margin:8px 0 2px;font-size:.83rem}.sector-row select{width:auto;max-width:100%}
+.directory{margin-block:15px}
+.panel-title{padding:15px 16px;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center;justify-content:space-between}
+.panel-title .eyebrow{font-size:.74rem;font-weight:800;color:var(--green);margin-bottom:2px}
+.items{list-style:none;margin:0;padding:0}
+.item{padding:12px 16px;border-block-end:1px solid var(--line);overflow-wrap:anywhere}
+.item:last-child{border:0}
+.item p{color:var(--sub);font-size:.88rem;margin-block:3px}
+.item .meta{color:var(--green);font-size:.73rem;font-weight:790;margin:0 0 5px}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.actions a,.actions button{margin-inline-start:-7px;font-size:.83rem;padding-inline:7px}
+.jump{border:0;background:none;text-decoration:underline;color:var(--green)}
+.source,.jump{text-underline-offset:3px}
+.sidebar .panel-title{background:#f6faf3}
+.fund-intro{padding:10px 16px;color:var(--sub);font-size:.87rem}
+.fund-title{padding:7px 16px;background:#eaf1e5;color:#294839;font-size:.82rem}
+.fund-list .item{padding-block:10px}
+.mobile-only{display:none}
+footer{padding:14px 1px 28px;color:var(--sub);font-size:.82rem;border-top:1px solid var(--line)}
+footer p{margin-block-end:5px}
+@media(max-width:850px){
+.layout{display:flex;flex-direction:column;gap:12px;margin-block-start:11px}
+.layout>div,.sidebar{width:100%}.sidebar{margin-block:0 15px}
+.mobile-only{display:inline-flex}.desktop-only{display:none}
+.head{min-height:49px}.brand{font-size:.82rem}.brand b{width:28px;height:28px}.back{font-size:.79rem;padding-inline:4px}
+.intro{padding-block:13px 16px;align-items:center}.mast .topo{width:60%}
+h1{font-size:2rem;margin:3px 0 4px}h1 span{display:block;margin:4px 0 0;font-size:.59em}.lead{font-size:.84rem}
+.hero-stats{display:none}.kicker{font-size:.72rem}
+.panel{border-radius:16px}
+.searchbox{padding:9px 10px 5px}.searchrow{grid-template-columns:minmax(0,1fr) minmax(105px,auto);gap:5px}
+.searchrow select{width:114px;font-size:.82rem;padding-inline:5px}.searchrow input{font-size:.9rem}
+.mapbar{padding:4px 8px;gap:4px}.mapbuttons{gap:3px}.mapbar .control{font-size:.71rem;white-space:nowrap}.mapbuttons svg{width:14px;height:14px}.count{font-size:.71rem}
+#map{height:clamp(340px,50svh,500px)}
+}
+@media(max-width:380px){.wrap{padding-inline:10px}.lead{font-size:.8rem}.mapbar .control{padding-inline:4px}.count{font-size:.68rem}}
+@media print{.mapbar,.searchbox,.actions,.back{display:none}#map{height:340px}.mast{background:#fff;color:#000}.mast *{color:#000!important}}
+:root{--bg:var(--site-background);--ink:var(--site-ink);--sub:var(--site-secondary);--line:var(--site-line);--paper:var(--site-surface);--forest:var(--site-forest);--green:var(--site-action);--mint:var(--site-tint);--radius:var(--site-radius);--soft:var(--site-shadow)}
+.wrap{max-width:1640px;padding-inline:clamp(12px,2vw,30px)}
+.head{min-height:54px}
+.brand b{border-color:#8ee2d670}.back:hover{color:#8ee2d6}
+.workspace-head{display:flex;justify-content:space-between;align-items:center;gap:14px;padding-block:20px 15px}
+.workspace-head h1{font-size:clamp(1.9rem,3.5vw,2.9rem);margin:0 0 4px;letter-spacing:-.045em}
+.workspace-head .lead{color:var(--sub);font-size:.9rem}
+.eyeline{color:var(--green);font-weight:800;font-size:.75rem;margin:0 0 4px}
+.metrics{display:flex;gap:7px;flex-wrap:wrap;flex-shrink:0}
+.metrics span{background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:.77rem;color:var(--sub)}
+.metrics b{color:var(--ink);font-size:.96rem;font-variant-numeric:tabular-nums}
+.workspace{display:grid;grid-template-columns:minmax(190px,218px) minmax(0,1fr) minmax(285px,340px);grid-template-areas:"layers map result";gap:12px;align-items:stretch}
+.layer-panel{grid-area:layers;min-width:0;display:flex;flex-direction:column}
+.layer-panel .panel-title,.results-panel .panel-title{padding:13px 13px;background:#fbfcfd}
+.layer-panel h2,.results-panel h2{font-size:1.08rem}
+.layer-panel .chips{display:grid;gap:2px;margin:0;padding:6px}
+.layer-panel .chip{width:100%;justify-content:flex-start;gap:7px;border:1px solid transparent;border-radius:8px;padding:4px 6px;text-align:start;font-size:.76rem;min-height:33px}
+.layer-panel .chip:hover{background:#edf5f6}
+.layer-panel .chip[aria-pressed=true]{background:#e1f2f1;border-color:#cae7e4;color:#10474a}
+.layer-total{margin-inline-start:auto;color:var(--sub);font-weight:600;font-size:.71rem;font-variant-numeric:tabular-nums}
+.layer-panel .symbol{width:19px;height:19px;min-width:19px}.layer-panel .symbol svg{width:12px;height:12px}
+.map-panel{grid-area:map;min-width:0;display:flex;flex-direction:column}
+.searchbox{padding:10px}
+.searchrow{grid-template-columns:minmax(0,1fr) auto}
+.searchrow input,.searchrow select{background:#f7fafb;border-color:#cbdce2}
+.searchrow select{width:auto;min-width:120px;max-width:150px}
+.mapbar{background:#edf5f5;border-bottom:1px solid #dae8ea;padding:3px 9px}
+#map{height:clamp(420px,calc(100svh - 240px),710px);flex:1;min-height:410px;background:#e7eef0}
+#map .leaflet-tile-pane{filter:saturate(.57) contrast(.98)}
+.pin .cluster{background:#15646a;box-shadow:0 0 0 3px #155f6734,0 3px 9px #14314066}.pin .cluster.large{background:#123a50;box-shadow:0 0 0 4px #153d5638,0 3px 9px #14314066}
+.pin.is-selected{z-index:9000!important}.pin.is-selected .symbol,.pin.is-selected .cluster{outline:3px solid #f4aa58;outline-offset:2px}
+.key{padding:2px 9px 0;border-top:1px solid var(--line);margin:0}
+.key[open]{margin:0}.key summary{padding-inline:4px;min-height:40px}.key ul{padding-inline:4px}
+.key .symbol{width:17px;height:17px;min-width:17px}.key .symbol svg{width:12px;height:12px}
+.map-panel .note{padding:6px 10px;font-size:.73rem;background:#f9fbfc}
+.results-panel{grid-area:result;min-width:0;display:flex;flex-direction:column;scroll-margin-top:8px}
+.result-nav{display:flex;gap:4px;padding:6px;border-bottom:1px solid var(--line);background:#f8fafb}
+.result-nav button{flex:1;min-height:42px;padding:4px 6px;border:0;border-radius:8px;background:none;color:var(--sub);cursor:pointer;font-size:.83rem;font-weight:750}
+.result-nav button[aria-pressed=true]{background:#e1f2f1;color:#10474a}
+.result-scroll{max-height:clamp(460px,calc(100svh - 195px),740px);overflow:auto;overscroll-behavior:contain}
+.result-scope{padding:8px 11px;border-bottom:1px solid var(--line);font-size:.77rem;color:var(--sub);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.result-scope button{font-size:.72rem;min-height:34px;padding:3px 6px}
+.result-card{padding:11px 13px;border-bottom:1px solid var(--line)}
+.result-card p{font-size:.82rem;margin:5px 0 0;color:var(--sub);overflow-wrap:anywhere}
+.result-card .card-heading{display:flex;align-items:flex-start;gap:7px}
+.result-card h3{font-size:.95rem;line-height:1.4}
+.result-card .actions{margin-block-start:3px}
+.result-card .actions button,.result-card .actions a{padding-inline:7px;font-size:.76rem;margin-inline-start:0;min-height:40px}
+.detail-card{margin:8px 8px 0;border:1px solid #a9d4d5;border-inline-start:4px solid #0b7880;border-radius:11px;background:#f0faf9}
+.detail-card h3{font-size:1.1rem}
+.meta-grid{margin:9px 0 0;display:grid;grid-template-columns:1fr;gap:4px;font-size:.78rem}
+.meta-grid div{display:grid;grid-template-columns:65px minmax(0,1fr);gap:5px}
+.meta-grid dt{color:var(--sub)}.meta-grid dd{margin:0;overflow-wrap:anywhere;color:var(--ink)}
+.close-detail{display:flex;justify-content:flex-end;padding-inline:8px}.close-detail .control{min-height:38px;font-size:.77rem}
+#fund-list .item{padding:10px 13px}
+.mobile-actions{display:none}
+footer{margin-top:13px}
+@media(min-width:961px){.searchrow #category{display:none}}
+@media(max-width:960px){
+ .workspace{grid-template-columns:minmax(0,1fr) minmax(255px,300px);grid-template-areas:"map result";gap:10px}
+ .layer-panel{display:none}
+}
+@media(max-width:700px){
+ .workspace{display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"map" "result";gap:9px}
+ .workspace-head{padding-block:12px 9px;gap:8px;flex-wrap:wrap}
+ .workspace-head h1{font-size:1.85rem;margin:0 0 2px}.workspace-head .lead{font-size:.78rem}
+ .metrics span{padding:3px 7px;font-size:.68rem}.metrics b{font-size:.78rem}
+ .mobile-actions{display:flex;gap:4px}.mobile-actions a{font-size:.73rem;white-space:nowrap;min-height:40px;padding:4px 5px}
+ .searchbox{padding:7px}.searchrow{gap:5px}.searchrow select{min-width:103px;width:108px;font-size:.76rem}.searchrow input{font-size:.8rem}
+ .mapbar .count{font-size:.69rem}
+ #map{height:clamp(355px,49svh,475px);min-height:0;flex:auto}
+ .result-scroll{max-height:none;overflow:visible}
+ .result-card .actions button,.result-card .actions a{min-height:44px}
+}
+.mapbar #show-pins[aria-pressed=true]{background:#cce8e7;color:#0d4449}
+.pin-dense .symbol{width:14px;height:14px;min-width:14px;border-radius:50%;border-width:1px;box-shadow:0 1px 3px #182f3c80}
+.pin-dense .symbol svg,.pin-dense small{display:none}.pin-dense:hover .symbol{outline:2px solid #f4aa58}
+@media(max-width:700px){.mapbar{flex-wrap:wrap}.mapbuttons{flex-wrap:wrap}}
+.location-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-block-start:8px}
+.location-bar label{display:flex;align-items:center;gap:8px;flex:1 1 225px;min-width:0;font-size:.82rem;font-weight:750;color:var(--ink)}
+.location-bar select{width:auto;min-width:0;flex:1;max-width:240px;font-size:.86rem}
+.location-bar .control{font-size:.81rem}
+.precision-tag{display:inline-flex;align-items:center;gap:5px;padding:2px 7px;margin-block-start:7px;border-radius:6px;background:#e5f3ef;color:#215449;font-size:.73rem;font-weight:750}
+.precision-tag::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.precision-tag[data-kind="locality"]{background:#fcf0db;color:#744913}
+.precision-tag[data-kind="unconfirmed"]{background:#edf0f3;color:#47596a}
+#map-empty{padding:9px 13px;background:#f4f7f9;color:var(--sub);font-size:.83rem;border-block-end:1px solid var(--line)}
+@media(max-width:700px){.location-bar{gap:5px}.location-bar label{flex-basis:165px}.location-bar select{max-width:none}.location-bar .control{padding-inline:7px}}
+.workspace-head h1{font-size:clamp(2rem,4.2vw,3.5rem)}
+.map-panel,.results-panel{scroll-margin-block-start:calc(var(--site-header-height) + 8px)}
+.location-bar .control:disabled{opacity:.55;cursor:default}
+@media(max-width:700px){
+  .searchrow input,.searchrow select,.location-bar select,.sector-row select{font-size:16px}
+  .searchrow select{width:132px}
+  .mapbar .control{min-height:44px}
+}
+</style>
+<script src="gate.js"></script><link rel="stylesheet" href="polish.css">
+</head>
+<body>
+<header class="site-header"><div class="site-header-inner">
+<a class="site-logo" href="./"><span class="site-logo-mark" aria-hidden="true">נ</span><span>נגב מחובר</span></a>
+<nav class="site-pages" aria-label="עמודי האתר"><a href="./">מאגר השותפים</a><a href="./map.html" aria-current="page">מפת הדרום</a></nav>
+</div></header>
+<main class="wrap">
+<div class="workspace-head"><div><p class="eyeline">אטלס שותפים · דרום ישראל</p><h1>מפת הדרום</h1><p class="lead">מאשדוד עד אילת: תעשייה, בריאות, רשויות ושותפים אפשריים.</p></div>
+<div class="metrics" aria-label="היקף המידע"><span><b id="total-stat"></b> רשומות</span><span><b id="located-stat"></b> עם סמן מבוסס מקור</span></div></div>
+<div class="workspace">
+<aside class="panel layer-panel" aria-labelledby="layer-title"><div class="panel-title"><h2 id="layer-title">שכבות מידע</h2></div><div class="chips" id="chips" role="group" aria-label="בחירת שכבה במפה"></div></aside>
+<section class="panel map-panel" id="map-panel" aria-label="המפה והשכבות">
+<div class="searchbox">
+<div class="searchrow"><div class="search-field"><svg class="search-icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="5.5"/><path d="m15 15 4 4"/></svg>
+<input class="site-search-input" id="query" type="search" aria-label="חיפוש במפה" placeholder="שם, יישוב או תחום" autocomplete="off"></div>
+<select id="category" aria-label="בחירת שכבה"></select></div>
+
+<div class="location-bar"><label for="precision">סוג מיקום <select id="precision"><option value="all">כל הרשומות</option><option value="site">נקודות אתר</option><option value="locality">נקודות ייחוס ליישוב</option><option value="unconfirmed">ללא סמן מאומת</option></select></label><button class="control" id="reset-filters" type="button" disabled>איפוס</button></div>
+<label id="sector-row" class="sector-row" hidden>ענף תעשייה <select id="sector" aria-label="סינון לפי ענף תעשייה"></select></label>
+<details class="key"><summary>מקרא הסימונים</summary><ul id="key-types"></ul><strong>צבעים בשכבת התעשייה</strong><ul id="key-industry"></ul></details>
+</div>
+<div class="mapbar"><div class="mapbuttons">
+<button class="control" id="negev" type="button" aria-label="חזרה לתצוגת הדרום"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg>מבט אזורי</button>
+<button class="control" id="show-pins" type="button" aria-pressed="false">סמנים נפרדים</button><button class="control" id="mode3d" type="button" aria-pressed="false">תצוגת תלת־ממד</button><button class="control" id="rotate3d" type="button" aria-pressed="false" hidden>סיבוב אוטומטי</button><div class="mobile-actions"><a class="control" href="#results-panel">תוצאות</a><a class="control" href="#results-panel" id="mobile-fund">פילנתרופיה</a></div></div><p id="count" class="count" aria-live="polite"></p></div>
+<div id="map" aria-label="מפת דרום ישראל מאשדוד ועד אילת"><span id="loading">טוען את המפה…</span></div>
+<div id="map3d" hidden aria-label="מפת תלת־ממד של דרום ישראל"></div>
+<p id="map-empty" hidden></p>
+<p id="map-status" role="status" hidden></p>
+<p class="note">המפה מציגה נקודות ממקורות מיפוי ונקודות ייחוס ליישובים. רשומות ללא סמן מאומת זמינות בחיפוש. בכרטיס הרשומה מופיעים סוג המיקום ומקורו.</p>
+</section>
+<aside class="panel results-panel" id="results-panel" aria-labelledby="results-title">
+<div class="panel-title"><h2 id="results-title">פרטים ומקורות</h2></div>
+<div class="result-nav" role="group" aria-label="תצוגת פרטים"><button type="button" id="results-tab" aria-pressed="true">תוצאות</button><button type="button" id="fund-tab" aria-pressed="false">פילנתרופיה</button></div>
+<div class="result-scroll" id="result-scroll">
+<div id="results-view"><div id="selected-record" aria-live="polite" hidden></div>
+<div class="result-scope"><span id="result-range"></span><button class="control" id="clear-cluster" type="button" hidden>לכל התוצאות</button></div>
+<ul id="items" class="items"></ul><div class="note" id="more-area" hidden><button id="more" class="control" type="button">הצגת עוד רשומות</button></div><p id="empty" class="note" hidden>לא נמצאו תוצאות לסינון הזה. נסו לשנות את החיפוש או לאפס את המסננים.</p></div>
+<div id="funds" hidden><p class="fund-intro">קרנות וגופים תומכים לפי זיקתם לנגב. הרשימה כאן נפרדת מהסינון במפה.</p><div id="fund-list" class="fund-list"></div></div>
+</div></aside></div>
+<noscript><p>כדי להפעיל את המפה, יש לאפשר JavaScript בדפדפן.</p></noscript>
+<footer><p>מדריכי המקור: <a href="https://data.gov.il/he/datasets/ministry_of_the_environment/factory">מפעלים ואתרי סביבה</a> · <a href="https://data.gov.il/datasets/ministry_of_transport/industrial">אזורי תעשייה</a> · <a href="https://registries.health.gov.il/Institutions/Institutions/1">רישוי מוסדות בריאות</a>.</p>המפה משלבת מקורות ציבוריים. רישום אינו מעיד שהאתר פעיל כיום, וכתובת ברמת יישוב אינה כתובת הגעה. הכיסוי אינו מלא, במיוחד בסניפי קופות, מוסדות גריאטריים ומפעלים שלא מופיעים במאגרים. <a href="https://www.openstreetmap.org/copyright">נתוני מפת רקע: OpenStreetMap</a>.</footer>
+</main>
+<script id="places" type="application/json">[]</script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+ const data=window.SECURE?(await window.SECURE).places:JSON.parse(document.getElementById('places').textContent);
+ const labels={
+ all:['הכול','#183230',''],local:['רשויות וערים','#1765a0','M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6M8 11h.01M16 11h.01'],
+ industry:['תעשייה ומפעלים','#79522d','M3 21V11l6 4v-4l6 4V5h4l2 16ZM6 18h1m4 0h1m4 0h1'],
+ infra:['נמלים וגבולות','#096d73','M12 2v14m-4-8h8m-13 5c0 5 4 8 9 8s9-3 9-8M3 13l3 2m15-2-3 2'],
+ public:['ממשל ופיתוח','#435472','M3 9h18L12 3ZM3 21h18M6 10v8m6-8v8m6-8v8'],
+ defense:['ביטחון','#674a8c','M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z'],
+ academic:['אוניברסיטאות ומכללות','#376829','m2 9 10-5 10 5-10 5Zm5 3v5c3 3 7 3 10 0v-5m5-3v6'],
+ healthAdmin:['הנהלות ומו״פ בבריאות','#366677','M5 4h14v16H5ZM8 8h8m-8 4h8m-8 4h5'],
+ hospital:['בתי חולים','#a31c3b','M5 21V5h14v16M3 21h18M12 8v8m-4-4h8'],
+ clinic:['מרפאות','#126a85','M4 4v6a5 5 0 0 0 10 0V4M4 4h2m6 0h2m-5 11v2a4 4 0 0 0 8 0v-2m0 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z'],
+ mental:['בריאות הנפש','#793985','M12 20S3 15 3 9a4.5 4.5 0 0 1 9-1 4.5 4.5 0 0 1 9 1c0 6-9 11-9 11ZM7 12h3l1-2 2 4 1-2h3'],
+ hub:['חממות והאבים','#875616','M4 7h4v4H4ZM16 7h4v4h-4ZM10 16h4v4h-4ZM8 9h8m-9 2 4 5m6-5-4 5'],
+ innovation:['חדשנות וקהילה','#8b360e','M9 18h6m-5 3h4M9 15a6 6 0 1 1 6 0v1H9Z'],
+ fund:['פילנתרופיה','#72530a','M3 14h4l3 3h5a2 2 0 0 0 0-4h-3l-3-3H3m0 0v9h13l5-5-1-2-3 2M13 7l2 2 4-4']
+ };
+ const sectors={park:['אזורי תעשייה','#435763','M4 20h16M6 20V8h5v12M13 20v-9h5v9M8 11h1m-1 3h1m6 0h1m-1 3h1'],chem:['כימיה ומחצבים','#813785','M9 3h6M10 3v6l-5 9a1.5 1.5 0 0 0 1.3 2.2h11.4A1.5 1.5 0 0 0 19 18l-5-9V3M8 15h8'],food:['מזון ומשקאות','#9a420d','M7 3v7a2 2 0 0 0 2 2v9M11 3v7a2 2 0 0 1-2 2M17 21V3c-2 1-3 4-3 8h3'],tech:['אלקטרוניקה וציוד רפואי','#195693','M8 8h8v8H8ZM4 10h2m-2 4h2m12-4h2m-2 4h2M10 4v2m4-2v2m-4 12v2m4-2v2'],eco:['סביבה ומיחזור','#2e682e','M5 19c0-9 5-14 14-14 0 9-5 14-14 14ZM5 19l8-8'],material:['חומרים, אריזה ולוגיסטיקה','#885519','M3 8l9-5 9 5v8l-9 5-9-5ZM3 8l9 5 9-5M12 13v8'],energy:['אנרגיה','#2d6363','M13 2 4 14h7l-1 8 9-12h-7Z'],other:['ייצור אחר','#575b63','M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M19 5l-2 2M7 17l-2 2']};
+ const symbol=(cat,sector='')=>'<span class="symbol" style="--pin:'+(sectors[sector]?.[1]||labels[cat][1])+'" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="'+(sectors[sector]?.[2]||labels[cat][2])+'"/></svg></span>';
+ const precisionLabels={locality:'נקודת ייחוס ליישוב',unconfirmed:'ללא סמן מאומת','public-record':'נקודה ממאגר ממשלתי','matched-site':'מתחם שהוצלב','industrial-record':'נקודת אתר ממאגר המפעלים','industrial-crosscheck':'נקודת אתר ממאגר המפעלים ומפל״ס'};
+ const precisionGroup=r=>!r.loc?'unconfirmed':r.locationKind==='locality'?'locality':'site';
+ const $=id=>document.getElementById(id);
+ const make=(tag,cls,value)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(value)e.textContent=value;return e};
+ const src=(r)=>{const a=make('a','source','מקור ופרטים ↗');a.href=r.url;a.target='_blank';a.rel='noopener noreferrer';return a};
+ const status=(value)=>{$('map-status').textContent=value;$('map-status').hidden=!value};
+ const southBounds=[[29.44,34.27],[31.88,35.56]];
+ let map,layer,selection='all',markers=new Map(),visible=[],listed=[],pageEnd=25,clusterView=null,selectedRecord=null,showPins=false;
+ function view(){if(!map)return;map.closePopup();map.fitBounds(southBounds,{padding:[12,12],animate:false});}
+ if(window.L){
+   $('loading').remove();
+   map=L.map('map',{zoomSnap:.25,minZoom:5,maxZoom:13,scrollWheelZoom:false,tapHold:false,maxBounds:southBounds,maxBoundsViscosity:1});
+   map.zoomControl.setPosition('topright');
+   let errors=0;
+   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'})
+     .on('tileerror',()=>{if(++errors>=3)status('מפת הרקע לא נטענה במלואה. הסמנים ורשימת המוקדים עדיין זמינים.')})
+     .on('tileload',()=>{if(errors){errors=0;status('')}}).addTo(map);
+   layer=L.layerGroup().addTo(map);view();
+ }else{
+   $('map').hidden=true;$('negev').hidden=true;
+   status('המפה לא נטענה. אפשר להמשיך להשתמש בחיפוש וברשימת המוקדים.');
+ }
+ const legendEl=L_legend();
+ function L_legend(){
+   if(!window.L||!map)return null;
+   const c=L.control({position:'bottomleft'});
+   c.onAdd=()=>{const d=L.DomUtil.create('div','map-legend');d.setAttribute('dir','rtl');L.DomEvent.disableClickPropagation(d);L.DomEvent.disableScrollPropagation(d);return d;};
+   c.addTo(map);return c.getContainer();
+ }
+ let legendOpen=false;
+ function drawLegend(){
+   if(!legendEl)return;
+   const tally={};for(const r of visible){if(!r.loc)continue;const k=selection==='industry'?(r.sector||'other'):r.cat;tally[k]=(tally[k]||0)+1;}
+   const entries=selection==='industry'?Object.entries(sectors).map(([k,v])=>[k,v[0],symbol('industry',k)]):Object.entries(labels).filter(([k])=>k!=='all').map(([k,v])=>[k,v[0],symbol(k)]);
+   legendEl.replaceChildren();
+   const head=make('button','legend-head','מקרא'+(selection==='industry'?' · ענפי תעשייה':''));head.type='button';head.setAttribute('aria-expanded',String(legendOpen));
+   head.addEventListener('click',()=>{legendOpen=!legendOpen;drawLegend();});
+   legendEl.append(head);
+   if(!legendOpen)return;
+   const ul=make('ul','legend-list');
+   for(const [k,label,icon] of entries){
+     const li=make('li');const b=make('button','legend-item');b.type='button';
+     b.insertAdjacentHTML('afterbegin',icon);b.append(make('span','legend-label',label),make('span','legend-count',number.format(tally[k]||0)));
+     if(selection!=='industry'){b.addEventListener('click',()=>choose(selection===k?'all':k));if(selection===k)b.setAttribute('aria-pressed','true');}
+     else{b.addEventListener('click',()=>{sectorSelect.value=sectorSelect.value===k?'':k;render();});}
+     li.append(b);ul.append(li);
+   }
+   legendEl.append(ul);
+ }
+ $('negev').addEventListener('click',()=>(typeof is3d!=='undefined'&&is3d)?home3d(true):view());
+ const pinsButton=$('show-pins');pinsButton.hidden=!map;
+ pinsButton.addEventListener('click',()=>{showPins=!showPins;pinsButton.setAttribute('aria-pressed',String(showPins));drawMarkers();});
+ function switchTab(tab){
+   const funds=tab==='fund';
+   $('results-view').hidden=funds;$('funds').hidden=!funds;
+   $('results-tab').setAttribute('aria-pressed',String(!funds));$('fund-tab').setAttribute('aria-pressed',String(funds));
+   $('result-scroll').scrollTop=0;
+ }
+ function bringDetails(){if(window.matchMedia('(max-width: 700px)').matches)$('results-panel').scrollIntoView({block:'start'});}
+ function highlight(){
+   if(typeof sel3d==='function')sel3d();
+   for(const e of document.querySelectorAll('.pin.is-selected'))e.classList.remove('is-selected');
+   if(selectedRecord)markers.get(selectedRecord.id)?.getElement()?.classList.add('is-selected');
+ }
+ function find(r){
+   if(!r.loc)return;
+   if(typeof is3d!=='undefined'&&is3d&&m3){m3.flyTo({center:[r.loc[1],r.loc[0]],zoom:Math.max(m3.getZoom(),11),pitch:64,duration:1800});highlight();return}
+   if(!map)return;
+   map.setView(r.loc,Math.max(map.getZoom(),11),{animate:false});
+   highlight();
+   if(window.matchMedia('(max-width: 700px)').matches)$('map-panel').scrollIntoView({block:'start'});
+ }
+ function action(label,onClick){const b=make('button','jump',label);b.type='button';b.addEventListener('click',onClick);return b;}
+ function card(r,{full=false,fund=false}={}){
+   const el=make(full?'article':'li',full?'result-card detail-card':'result-card');
+   const heading=make('div','card-heading');
+   heading.insertAdjacentHTML('afterbegin',symbol(r.cat,r.sector));
+   heading.append(make('h3','',r.name));el.append(heading,make('p','',r.desc));
+   const tag=make('span','precision-tag',precisionLabels[r.locationKind]||'ללא סמן מאומת');
+   tag.dataset.kind=precisionGroup(r);el.append(tag);
+   const actions=make('div','actions');
+   if(full){
+     const dl=make('dl','meta-grid');
+     const pairs=[['תחום',labels[r.cat][0]]];
+     if(r.sector)pairs.push(['ענף',sectors[r.sector][0]]);
+     if(r.group)pairs.push(['זיקה',r.group]);
+     if(r.address)pairs.push(['כתובת',r.address]);
+     if(r.locality)pairs.push(['יישוב',r.locality]);
+     if(r.locationNote)pairs.push(['דיוק',r.locationNote]);
+     if(r.registry_id)pairs.push(['מזהה אתר',r.registry_id]);
+     for(const [key,value] of pairs){const row=make('div');row.append(make('dt','',key),make('dd','',String(value)));dl.append(row);}
+     el.append(dl);
+     if(map&&r.loc)actions.append(action(r.locationKind==='locality'?'הצגת נקודת היישוב':'הצגה במפה',()=>find(r)));
+   }else if(!fund){actions.append(action('פרטי הרשומה',()=>showRecord(r,false)));}
+   if(r.url)actions.append(src(r));
+   if(full&&r.locationSource&&r.locationSource!==r.url){
+     const coord=src({url:r.locationSource});coord.textContent='מקור המיקום ↗';actions.append(coord);
+   }
+   el.append(actions);return el;
+ }
+ function showRecord(r,fromMap){
+   selectedRecord=r;switchTab('results');
+   const holder=$('selected-record');holder.hidden=false;
+   const bar=make('div','close-detail');
+   const close=make('button','control','סגירת הפרטים');close.type='button';close.addEventListener('click',clearRecord);bar.append(close);
+   holder.replaceChildren(card(r,{full:true}),bar);highlight();
+   if(fromMap)bringDetails();
+ }
+ function clearRecord(){selectedRecord=null;$('selected-record').hidden=true;$('selected-record').replaceChildren();highlight();}
+ function listPage(reset=false){
+   if(reset){pageEnd=25;$('items').replaceChildren();}
+   const start=$('items').children.length;
+   for(const r of listed.slice(start,pageEnd))$('items').append(card(r));
+   const prefix=clusterView?'במקבץ: ':'';
+   $('result-range').textContent=listed.length?prefix+number.format(Math.min(pageEnd,listed.length))+' מתוך '+number.format(listed.length)+' רשומות':'0 רשומות';
+   $('clear-cluster').hidden=!clusterView;
+   $('more-area').hidden=listed.length<=pageEnd;
+   $('empty').hidden=listed.length!==0;
+ }
+ function showCluster(records,center,expandable){
+   clusterView={records,center};listed=records;clearRecord();switchTab('results');listPage(true);
+   if(expandable){
+     const b=make('button','control','התקרבות למקבץ');b.type='button';
+     b.addEventListener('click',()=>{map.setView(center,Math.min(12,map.getZoom()+2),{animate:false});if(window.matchMedia('(max-width: 700px)').matches)$('map-panel').scrollIntoView({block:'start'});});
+     $('result-range').append(' ',b);
+   }
+   bringDetails();
+ }
+ $('results-tab').addEventListener('click',()=>switchTab('results'));
+ $('fund-tab').addEventListener('click',()=>switchTab('fund'));
+ $('mobile-fund').addEventListener('click',()=>switchTab('fund'));
+ $('clear-cluster').addEventListener('click',()=>{clusterView=null;listed=visible;clearRecord();listPage(true);});
+ $('more').addEventListener('click',()=>{pageEnd+=25;listPage();});
+ const chips=$('chips'), category=$('category');
+ const number=new Intl.NumberFormat('he-IL');
+ const searchIndex=new Map();
+ $('total-stat').textContent=number.format(data.length);
+ $('located-stat').textContent=number.format(data.filter(r=>r.loc).length);
+ const counts=new Map();for(const r of data)counts.set(r.cat,(counts.get(r.cat)||0)+1);
+ const choose=(key)=>{selection=key;category.value=key;if(key!=='industry')sectorSelect.value='';render()};
+ category.addEventListener('change',()=>choose(category.value));
+ const sectorSelect=$('sector');
+ sectorSelect.add(new Option('כל הענפים',''));
+ for(const [k,[label]] of Object.entries(sectors))sectorSelect.add(new Option(label,k));
+ sectorSelect.addEventListener('change',render);
+ for(const [key,[label]] of Object.entries(labels)){
+   if(key==='all')continue;
+   const item=make('li');item.innerHTML=symbol(key);item.append(document.createTextNode(label));$('key-types').append(item);
+ }
+ for(const [key,[label]] of Object.entries(sectors)){
+   const item=make('li');item.innerHTML=symbol('industry',key);item.append(document.createTextNode(label));$('key-industry').append(item);
+ }
+ for(const [key,[label,color]] of Object.entries(labels)){
+   category.add(new Option(key==='all'?'כל השכבות':label,key));
+
+   const b=make('button','chip',label);b.type='button';b.dataset.layer=key;
+   if(key!=='all')b.insertAdjacentHTML('afterbegin',symbol(key));
+   b.append(make('span','layer-total',number.format(counts.get(key)||data.length)));
+   b.addEventListener('click',()=>choose(key));chips.append(b);
+ }
+ const clean=s=>s.toLocaleLowerCase('he').normalize('NFKD').replace(/[\u0591-\u05c7]/g,'').replace(/[^\p{L}\p{N}\s]/gu,'').replace(/\s+/g,' ').trim();
+ for(const r of data)searchIndex.set(r.id,clean([r.name,r.desc,r.group,r.locality,r.address,r.sector&&sectors[r.sector]?.[0],labels[r.cat][0]].join(' ')));
+ const precisionSelect=$('precision'),resetFilters=$('reset-filters');
+ precisionSelect.addEventListener('change',render);
+ resetFilters.addEventListener('click',()=>{
+   $('query').value='';precisionSelect.value='all';sectorSelect.value='';choose('all');$('query').focus();
+ });
+ function render(){
+   const terms=clean($('query').value).split(' ').filter(Boolean);
+   const match=r=>terms.every(t=>searchIndex.get(r.id).includes(t));
+   $('sector-row').hidden=selection!=='industry';
+   const candidates=data.filter(r=>match(r)&&(selection==='all'||r.cat===selection)&&(!sectorSelect.value||r.sector===sectorSelect.value));
+   const tally={all:candidates.length,site:0,locality:0,unconfirmed:0};
+   for(const r of candidates)tally[precisionGroup(r)]++;
+   const optionLabels={all:'כל הרשומות',site:'נקודות אתר',locality:'נקודות ייחוס ליישוב',unconfirmed:'ללא סמן מאומת'};
+   for(const o of precisionSelect.options)o.textContent=optionLabels[o.value]+' ('+number.format(tally[o.value])+')';
+   const results=precisionSelect.value==='all'?candidates:candidates.filter(r=>precisionGroup(r)===precisionSelect.value);
+   resetFilters.disabled=!$('query').value&&selection==='all'&&precisionSelect.value==='all';
+   if(!terms.length&&selection==='all'){const first=new Set([1,2,8,10]);results.sort((a,b)=>Number(first.has(b.id))-Number(first.has(a.id)));}
+   for(const b of chips.children)b.setAttribute('aria-pressed',String(b.dataset.layer===selection));
+   const loc=results.filter(r=>r.loc);
+   $('count').textContent=number.format(results.length)+' תוצאות · '+number.format(loc.length)+' עם סמן';
+   const emptyMap=$('map-empty');
+   emptyMap.hidden=!!loc.length;
+   emptyMap.textContent=results.length?'לתוצאות האלה אין סמן מאומת. הפרטים ומקורות המידע מופיעים ברשימה.':'אין סמנים לסינון הנוכחי.';
+   visible=results;listed=results;clusterView=null;clearRecord();switchTab('results');listPage(true);
+   const funds=data.filter(r=>r.cat==='fund');
+   $('fund-list').replaceChildren();
+   for(const group of ['פעילות ממוקדת בנגב','ישראל','מחו״ל']){
+     const entries=funds.filter(r=>r.group===group);if(!entries.length)continue;
+     const ul=make('ul','items');ul.append(...entries.map(r=>card(r,{fund:true})));
+     $('fund-list').append(make('h3','fund-title',group),ul);
+   }
+   if(!funds.length)$('fund-list').append(make('p','note','לא נמצאו גופי פילנתרופיה לחיפוש הזה.'));
+   drawMarkers();drawLegend();if(typeof update3d==='function')update3d();
+ }
+ function drawMarkers(){
+   if(!map)return;
+   map.closePopup();layer.clearLayers();markers=new Map();
+   const groups=new Map();
+   const viewBounds=map.getBounds().pad(.4), cluster=!showPins&&map.getZoom()<10;
+   for(const r of visible){
+     if(!r.loc||!viewBounds.contains(r.loc))continue;
+     const p=map.project(r.loc);
+     // Keep infrastructure distinct from other layers while grouping overlapping infrastructure pins.
+     let key=cluster&&r.cat!=='infra'?r.cat+(selection==='industry'?r.sector||'':'')+':'+Math.floor(p.x/55)+':'+Math.floor(p.y/55):r.loc.join(',');
+     if(cluster&&r.cat==='infra'){
+       const nearby=[...groups].find(([k,entries])=>k.startsWith('infra:')&&map.project(entries[0].loc).distanceTo(p)<33);
+       key=nearby?.[0]||'infra:'+key;
+     }
+     if(!groups.has(key))groups.set(key,[]);
+     groups.get(key).push(r);
+   }
+   for(const records of groups.values()){
+     const r=records[0];
+     const uniqueLocations=new Set(records.map(x=>x.loc.join(','))).size;
+     const expandable=cluster&&uniqueLocations>1;
+     const title=expandable?(r.cat==='infra'?'תשתיות: ':'')+number.format(records.length)+' מוקדים במקבץ. לחיצה להצגת הרשומות':records.length===1?r.name:r.name+' ועוד '+(records.length-1);
+     const html=expandable?symbol(r.cat,selection==='industry'?r.sector:'')+'<small class="count-badge" aria-hidden="true">'+number.format(records.length)+'</small>':symbol(r.cat,selection==='industry'?r.sector:'')+(records.length>1?'<small aria-hidden="true">'+records.length+'</small>':'');
+     const dense=showPins&&map.getZoom()<10;
+     const size=expandable?36:dense?14:32;
+     const center=expandable?[0,1].map(i=>records.reduce((sum,x)=>sum+x.loc[i],0)/records.length):r.loc;
+     const icon=L.divIcon({className:'pin'+(dense?' pin-dense':''),html,iconSize:[size,size],iconAnchor:[size/2,size/2]});
+     const m=L.marker(center,{icon,title,alt:title,riseOnHover:true,zIndexOffset:r.cat==='infra'?500:0}).addTo(layer);
+     m.getElement().setAttribute('aria-label',title);
+     m.on('click',()=>records.length===1?showRecord(r,true):showCluster(records,center,expandable));
+     for(const x of records)markers.set(x.id,m);
+   }
+   highlight();
+ }
+ if(map)map.on('moveend',drawMarkers);
+
+ // ===== 3D view (MapLibre GL, lazy-loaded) =====
+ let m3=null,is3d=false,spin=false,libP=null,m3ready=false,m3errors=0;
+ const byId=new Map(data.map(r=>[r.id,r]));
+ const IL=[[34.2399,31.1771],[34.2793,31.0718],[34.311,30.987],[34.3495,30.8994],[34.4005,30.7833],[34.4616,30.6445],[34.4825,30.5685],[34.4848,30.5264],[34.493,30.5034],[34.5109,30.4819],[34.5173,30.4757],[34.5163,30.4718],[34.5069,30.4428],[34.5048,30.4203],[34.5086,30.4016],[34.5196,30.3862],[34.5743,30.3446],[34.5821,30.3346],[34.6141,30.2546],[34.6731,30.1071],[34.7122,30.01],[34.7146,30.0052],[34.7153,30.0028],[34.7156,30.0005],[34.7151,29.9942],[34.722,29.9352],[34.7667,29.828],[34.8054,29.7354],[34.8302,29.6366],[34.8284,29.5671],[34.8368,29.538],[34.8608,29.4943],[34.8775,29.4723],[34.8935,29.4705],[34.9024,29.4697],[34.9195,29.4719],[34.9318,29.4846],[34.9343,29.4927],[34.9365,29.4965],[34.9431,29.5052],[34.9605,29.5242],[34.9692,29.5366],[34.975,29.5544],[34.9793,29.5815],[34.9849,29.5992],[34.998,29.6176],[35.0093,29.6474],[35.0147,29.7044],[35.0214,29.7263],[35.068,29.8363],[35.0731,29.8604],[35.074,29.9211],[35.0804,29.9511],[35.083,29.9564],[35.088,29.9644],[35.0936,29.9781],[35.0944,29.9912],[35.1041,30.025],[35.1461,30.0792],[35.1648,30.1189],[35.165,30.1581],[35.1446,30.2192],[35.1448,30.2406],[35.1515,30.2562],[35.1608,30.3078],[35.1652,30.3167],[35.1718,30.3267],[35.179,30.3413],[35.1821,30.3618],[35.1777,30.3835],[35.1622,30.406],[35.1595,30.4106],[35.1596,30.4262],[35.1765,30.4649],[35.1814,30.4894],[35.2235,30.6088],[35.2821,30.7117],[35.2829,30.7138],[35.291,30.7388],[35.2956,30.7643],[35.298,30.7725],[35.3022,30.7804],[35.3072,30.7852],[35.3258,30.8],[35.3354,30.816],[35.34,30.8436],[35.3395,30.8664],[35.3412,30.8838],[35.3503,30.8998],[35.3599,30.9073],[35.3892,30.932],[35.4045,30.9579],[35.405,30.9925],[35.4102,31.0167],[35.4573,31.0969],[35.4632,31.1331],[35.4547,31.1672],[35.4388,31.1943],[35.4289,31.2128],[35.4204,31.2357],[35.4155,31.2549],[35.4254,31.2719],[35.4412,31.2965],[35.4426,31.3317],[35.4363,31.3341],[35.4527,31.3511],[35.472,31.395],[35.4768,31.4215],[35.4771,31.433],[35.4765,31.5003],[35.4638,31.5111],[35.3849,31.5064],[35.3221,31.476],[35.2143,31.3989],[35.1619,31.382],[35.0391,31.3832],[34.9763,31.3758],[34.9507,31.3682],[34.9274,31.3649],[34.9079,31.3672],[34.8946,31.3752],[34.8871,31.3957],[34.8992,31.4201],[34.9453,31.4868],[34.9524,31.5251],[34.9528,31.5532],[34.9561,31.5751],[34.9703,31.598],[34.9711,31.5996],[34.9856,31.6144],[35.07,31.66],[35.1053,31.6863],[35.1283,31.7035],[35.1363,31.7161],[35.1445,31.7178],[35.1471,31.7148],[35.1583,31.7139],[35.1732,31.7011],[35.2013,31.7036],[35.2212,31.6952],[35.227,31.6994],[35.2153,31.702],[35.2184,31.6974],[35.2366,31.6894],[35.2573,31.6975],[35.2615,31.7091],[35.2664,31.7133],[35.2693,31.7273],[35.2723,31.7284],[35.2826,31.7457],[35.2761,31.7684],[35.271,31.7715],[35.2725,31.7666],[35.2755,31.7738],[35.2829,31.7909],[35.2778,31.8016],[35.2784,31.8045],[35.2755,31.8084],[35.2774,31.8079],[35.2841,31.8319],[35.2658,31.848],[35.2618,31.8476],[35.2715,31.8328],[35.2771,31.8408],[35.2662,31.8571],[35.2578,31.8628],[35.2441,31.8651],[35.2402,31.8614],[35.2454,31.8591],[35.2456,31.8589],[35.2464,31.87],[35.2352,31.8942],[35.2088,31.9012],[35.1881,31.8876],[35.1853,31.8665],[35.1912,31.8549],[35.1938,31.8478],[35.1963,31.837],[35.1962,31.8248],[35.1991,31.8312],[35.2126,31.8388],[35.2013,31.8459],[35.1879,31.8466],[35.1696,31.8394],[35.1624,31.817],[35.1667,31.808],[35.1709,31.8216],[35.1748,31.8275],[35.1445,31.8328],[35.1263,31.8442],[35.116,31.8436],[35.1113,31.8458],[35.102,31.8626],[35.0814,31.8735],[35.0633,31.8745],[35.0501,31.8724],[35.0347,31.865],[35.0185,31.8506],[35.0099,31.8491],[35.0021,31.8485],[34.9876,31.8499],[34.9964,31.8396],[34.995,31.8257],[35.0026,31.8303],[35.0083,31.8364],[35.0097,31.8363],[35.038,31.8386],[35.0523,31.8524],[35.0586,31.9129],[35.0412,31.9409],[35.0236,31.9452],[35.0214,31.9457],[35.0235,31.9361],[35.0274,31.9483],[35.0149,31.9642],[35.0067,31.9665],[35.0161,31.9707],[35.0188,31.9944],[35.0155,32.0042],[35.0266,32.0158],[35.0041,32.092],[35.0067,32.1268],[34.995,32.1588],[34.9808,32.182],[34.9782,32.1877],[34.9784,32.191],[35.0153,32.2188],[35.026,32.2366],[35.0311,32.2561],[35.0273,32.2764],[35.0128,32.2923],[35.0071,32.2887],[35.0127,32.2882],[35.0161,32.3188],[35.0164,32.3233],[35.0127,32.3198],[35.0263,32.3241],[35.0372,32.3322],[35.048,32.3596],[35.0522,32.3777],[35.063,32.4261],[35.0782,32.4487],[35.0997,32.4614],[35.1291,32.4732],[35.1635,32.4918],[35.1893,32.5171],[35.1969,32.5227],[35.205,32.523],[35.2022,32.5236],[35.2139,32.5185],[35.2435,32.498],[35.2679,32.4906],[35.3328,32.4931],[35.3574,32.491],[35.3779,32.4812],[35.3821,32.4675],[35.3815,32.438],[35.3925,32.4009],[35.4301,32.3884],[35.4542,32.3878],[35.4758,32.3829],[35.5775,32.3734],[35.572,32.404],[35.5668,32.4087],[35.5671,32.4082],[35.5626,32.3998],[35.5622,32.3925],[35.5777,32.4065],[35.5752,32.4284],[35.5701,32.4317],[35.5661,32.4153],[35.5756,32.4177],[35.5725,32.4478],[35.5584,32.4547],[35.5593,32.4538],[35.5719,32.4344],[35.5853,32.4404],[35.5789,32.4459],[35.5748,32.435],[35.5898,32.4467],[35.5878,32.4771],[35.5743,32.484],[35.5763,32.4831],[35.5746,32.4845],[35.578,32.4778],[35.5798,32.4696],[35.5806,32.4714],[35.5803,32.4715],[35.5958,32.4792],[35.5982,32.506],[35.5865,32.5181],[35.5854,32.521],[35.5704,32.537],[35.5566,32.5393],[35.5654,32.5336],[35.5661,32.5114],[35.5823,32.5146],[35.582,32.5377],[35.5681,32.5349],[35.5689,32.5264],[35.5878,32.5473],[35.5702,32.5405],[35.5547,32.5511],[35.565,32.5367],[35.5879,32.539],[35.5998,32.5581],[35.5937,32.5781],[35.5901,32.6053],[35.5848,32.6131],[35.5798,32.6009],[35.5867,32.6009],[35.5895,32.6318],[35.5779,32.6399],[35.5795,32.6371],[35.5795,32.6346],[35.5751,32.6285],[35.5793,32.6292],[35.5923,32.6387],[35.6066,32.655],[35.6322,32.6805],[35.6282,32.6705],[35.6058,32.6626],[35.6391,32.6594],[35.6483,32.6627],[35.6621,32.6689],[35.696,32.6944],[35.7471,32.7218],[35.7634,32.7252],[35.7697,32.7284],[35.7991,32.7646],[35.8514,32.8177],[35.8619,32.8537],[35.858,32.8653],[35.8674,32.8864],[35.878,32.9042],[35.8855,32.906],[35.9081,32.9456],[35.882,32.9877],[35.8783,32.9957],[35.8658,33.0845],[35.8664,33.1083],[35.8278,33.1235],[35.8305,33.1205],[35.8392,33.1307],[35.853,33.1572],[35.8467,33.2013],[35.8243,33.2128],[35.8205,33.2591],[35.7883,33.2804],[35.7886,33.273],[35.8218,33.316],[35.7838,33.3329],[35.7963,33.3259],[35.8055,33.3339],[35.8265,33.3488],[35.8311,33.3666],[35.8345,33.3729],[35.8353,33.3872],[35.8419,33.3966],[35.8264,33.426],[35.7899,33.4036],[35.7702,33.3704],[35.7578,33.3589],[35.7493,33.3546],[35.7379,33.3503],[35.7263,33.3476],[35.7131,33.3465],[35.6894,33.3405],[35.6454,33.3024],[35.6418,33.2938],[35.6259,33.2939],[35.6041,33.2816],[35.6005,33.2657],[35.5864,33.2526],[35.5847,33.246],[35.5842,33.2437],[35.5963,33.2586],[35.6092,33.2609],[35.601,33.2641],[35.6008,33.2641],[35.5985,33.267],[35.5821,33.2892],[35.5681,33.3009],[35.5395,33.2983],[35.5253,33.2813],[35.5193,33.2674],[35.5099,33.2532],[35.5004,33.226],[35.4978,33.1754],[35.4934,33.1541],[35.4864,33.1407],[35.4671,33.1113],[35.4678,33.1031],[35.4453,33.1048],[35.396,33.0871],[35.3442,33.0756],[35.3411,33.0749],[35.3387,33.0792],[35.3316,33.0913],[35.3186,33.1047],[35.3039,33.1147],[35.296,33.1179],[35.2873,33.1208],[35.2688,33.121],[35.2324,33.1108],[35.2301,33.1112],[35.2159,33.1143],[35.2047,33.1147],[35.1921,33.1108],[35.1807,33.1034],[35.1825,33.1038],[35.1013,33.1086],[35.0978,33.1074],[35.0805,33.0934],[35.0865,33.0827],[35.0885,33.0926],[35.0823,33.0855],[35.0731,33.0739],[35.0762,33.0502],[35.0729,33.0372],[35.0591,33.0039],[35.0522,32.9429],[35.047,32.9155],[35.062,32.9056],[35.0597,32.9074],[35.0565,32.8992],[35.0486,32.8745],[35.0469,32.8705],[35.0189,32.8446],[35.0186,32.845],[35.01,32.8464],[34.9901,32.8575],[34.9681,32.8612],[34.941,32.8481],[34.928,32.8185],[34.9223,32.7278],[34.8992,32.6445],[34.9011,32.6306],[34.8965,32.6198],[34.8909,32.5768],[34.8856,32.5681],[34.8538,32.4349],[34.8185,32.2866],[34.7424,32.0803],[34.7273,32.0723],[34.7227,32.0558],[34.724,32.0448],[34.7239,32.0446],[34.6943,31.961],[34.6763,31.9371],[34.6482,31.8831],[34.5932,31.7769],[34.5869,31.7701],[34.4982,31.6395],[34.4729,31.6116],[34.462,31.5777],[34.5102,31.541],[34.5361,31.5384],[34.5163,31.5362],[34.4891,31.5133],[34.4903,31.5137],[34.469,31.502],[34.3523,31.406],[34.3266,31.3633],[34.3256,31.3385],[34.3338,31.3057],[34.3333,31.2988],[34.3037,31.2728],[34.2528,31.2405],[34.2291,31.2168]];
+ const pinColor=r=>selection==='industry'&&sectors[r.sector]?sectors[r.sector][1]:labels[r.cat][1];
+ const geo=()=>({type:'FeatureCollection',features:visible.filter(r=>r.loc).map(r=>({type:'Feature',properties:{id:r.id,color:pinColor(r),name:r.name},geometry:{type:'Point',coordinates:[r.loc[1],r.loc[0]]}}))});
+ const loadLib=()=>libP||(libP=new Promise((ok,no)=>{
+   const l=document.createElement('link');l.rel='stylesheet';l.href='vendor/maplibre-gl.css';document.head.append(l);
+   const s=document.createElement('script');s.src='vendor/maplibre-gl.js';s.onload=ok;s.onerror=()=>{libP=null;no(new Error('lib'))};document.head.append(s);}));
+ function update3d(){if(m3&&m3ready){m3.getSource('pts')?.setData(geo());m3.getSource('beams')?.setData(beams());sel3d();}}
+ function sel3d(){if(m3&&m3ready&&m3.getLayer('sel')){const f=['==',['get','id'],selectedRecord?selectedRecord.id:-1];m3.setFilter('sel',f);m3.setFilter('sel-ring',f);}}
+ const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ let swayOn=false,swayBase=0,swayT0=0,userTouched=false,animOn=false,lastT=0;
+ const MARCH=[[0,4,3],[.5,4,2.5],[1,4,2],[1.5,4,1.5],[2,4,1],[2.5,4,.5],[3,4,0],[0,.5,3,3.5],[0,1,3,3],[0,1.5,3,2.5],[0,2,3,2],[0,2.5,3,1.5],[0,3,3,1],[0,3.5,3,.5]];
+ const zoom3d=()=>{const w=$('map3d').clientWidth||600;return w<480?5.75:w<800?6.0:6.3};
+ function armSway(){if(reduceMotion||!m3)return;m3.once('moveend',()=>{if(is3d&&!spin&&!userTouched){swayBase=m3.getBearing();swayT0=performance.now();swayOn=true;}});}
+ function home3d(animate){if(!m3)return;userTouched=false;swayOn=false;m3.easeTo({center:[35.0,31.0],zoom:zoom3d(),pitch:58,bearing:-8,duration:animate?2200:0});if(animate)armSway();}
+ function intro3d(){
+   if(!m3)return;userTouched=false;
+   if(reduceMotion){home3d(false);return;}
+   m3.jumpTo({center:[34.9,31.7],zoom:5.9,pitch:0,bearing:0});
+   m3.flyTo({center:[35.0,31.0],zoom:zoom3d(),pitch:58,bearing:-8,duration:6500,curve:1.5,essential:true});
+   armSway();
+ }
+ function stopSpin(){spin=false;swayOn=false;userTouched=true;$('rotate3d').setAttribute('aria-pressed','false');}
+ function spinLoop(){if(!spin||!m3)return;m3.setBearing((m3.getBearing()+.12)%360);requestAnimationFrame(spinLoop);}
+ function animLoop(ts){
+   if(!is3d||!m3||!m3ready){animOn=false;return;}
+   if(ts-lastT>=33){
+     lastT=ts;
+     if(!reduceMotion){
+       const t=(ts%2600)/2600,t2=(ts%1700)/1700;
+       m3.setPaintProperty('pulse','circle-radius',8+24*t);
+       m3.setPaintProperty('pulse','circle-opacity',.6*(1-t));
+       m3.setPaintProperty('sel-ring','circle-radius',14+40*t2);
+       m3.setPaintProperty('sel-ring','circle-opacity',.9*(1-t2));
+       m3.setPaintProperty('mask','fill-color','hsl('+(206+5*Math.sin(ts/5200))+',60%,'+(25+2.5*Math.sin(ts/3300))+'%)');
+       m3.setPaintProperty('b-march','line-dasharray',MARCH[Math.floor(ts/80)%MARCH.length]);
+       m3.setPaintProperty('hill','hillshade-illumination-direction',290+55*Math.sin(ts/7000));
+       if(swayOn)m3.setBearing(swayBase+7*Math.sin((ts-swayT0)/4800));
+     }
+   }
+   requestAnimationFrame(animLoop);
+ }
+ function startAnim(){if(animOn||!m3||!m3ready)return;animOn=true;requestAnimationFrame(animLoop);}
+ const beams=()=>({type:'FeatureCollection',features:visible.filter(r=>r.loc).map(r=>{const x=r.loc[1],y=r.loc[0],d=.0028;return{type:'Feature',properties:{color:pinColor(r)},geometry:{type:'Polygon',coordinates:[[[x-d,y-d],[x+d,y-d],[x+d,y+d],[x-d,y+d],[x-d,y-d]]]}}})});
+ async function build3d(){
+   await loadLib();
+   const world=[[-180,-85],[180,-85],[180,85],[-180,85],[-180,-85]];
+   const hole=IL.slice().reverse().concat([IL[IL.length-1]]);
+   const edge=IL.concat([IL[0]]);
+   m3=new maplibregl.Map({container:'map3d',center:[34.9,31.7],zoom:5.9,pitch:0,bearing:0,maxPitch:80,minZoom:5.6,maxZoom:14,maxBounds:[[33.7,29.2],[36.2,33.7]],attributionControl:{compact:true},
+     style:{version:8,glyphs:'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+       sources:{osm:{type:'raster',tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],tileSize:256,maxzoom:17,attribution:'Imagery © Esri, Maxar, Earthstar Geographics · © OpenStreetMap'},
+                dem:{type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],encoding:'terrarium',tileSize:256,maxzoom:13,attribution:'גובה: Mapzen / AWS'},
+                demhs:{type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],encoding:'terrarium',tileSize:256,maxzoom:13},
+                mask:{type:'geojson',data:{type:'Feature',properties:{},geometry:{type:'Polygon',coordinates:[world,hole]}}},
+                border:{type:'geojson',data:{type:'Feature',properties:{},geometry:{type:'LineString',coordinates:edge}}}},
+       layers:[{id:'bg',type:'background',paint:{'background-color':'#1a4a6e'}},
+               {id:'osm',type:'raster',source:'osm',paint:{'raster-saturation':.12,'raster-contrast':.12,'raster-brightness-min':.04}},
+               {id:'hill',type:'hillshade',source:'demhs',paint:{'hillshade-exaggeration':.7,'hillshade-shadow-color':'#2b2014','hillshade-highlight-color':'#fff1cf','hillshade-illumination-direction':305,'hillshade-illumination-anchor':'map'}},
+               {id:'mask',type:'fill',source:'mask',paint:{'fill-color':'hsl(206,60%,25%)','fill-opacity':1}},
+               {id:'b-shadow',type:'line',source:'border',layout:{'line-join':'round'},paint:{'line-color':'#020b16','line-width':34,'line-offset':17,'line-blur':24,'line-opacity':.7,'line-translate':[10,20]}},
+               {id:'b-glow',type:'line',source:'border',layout:{'line-join':'round'},paint:{'line-color':'#8fd8ff','line-width':10,'line-blur':8,'line-opacity':.55}},
+               {id:'b-line',type:'line',source:'border',layout:{'line-join':'round'},paint:{'line-color':'#e8f8ff','line-width':1.6}},
+               {id:'b-march',type:'line',source:'border',layout:{'line-join':'round'},paint:{'line-color':'#ffffff','line-width':3,'line-dasharray':[0,4,3]}}]}});
+   m3.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-right');
+   m3.on('error',ev=>{console.debug('3d',ev&&ev.error&&ev.error.message,ev&&ev.sourceId);if(++m3errors===3&&m3ready&&m3.getLayer('cluster-n')){m3.removeLayer('cluster-n');setTimeout(update3d,50);}if(m3errors===3)status('הרקע התלת־ממדי לא נטען במלואו. בתוך עמוד Claude טעינת מפות חיצוניות חסומה, ובאתר מאוחסן הוא נטען. הסמנים עדיין מוצגים.');});
+   m3.on('load',()=>{
+     m3.setTerrain({source:'dem',exaggeration:2.0});
+     m3.addSource('pts',{type:'geojson',data:geo(),cluster:true,clusterRadius:42,clusterMaxZoom:10});
+     m3.addSource('beams',{type:'geojson',data:beams()});
+     m3.addLayer({id:'beams',type:'fill-extrusion',source:'beams',minzoom:8,paint:{'fill-extrusion-color':['get','color'],'fill-extrusion-height':['interpolate',['linear'],['zoom'],8,7000,11,2200,13,900],'fill-extrusion-base':0,'fill-extrusion-opacity':.8}});
+     m3.addLayer({id:'pulse',type:'circle',source:'pts',filter:['!',['has','point_count']],paint:{'circle-color':['get','color'],'circle-radius':10,'circle-opacity':.4,'circle-pitch-alignment':'map','circle-pitch-scale':'map'}});
+     m3.addLayer({id:'clusters',type:'circle',source:'pts',filter:['has','point_count'],paint:{'circle-color':'#15646a','circle-radius':['step',['get','point_count'],15,10,19,50,24,200,30],'circle-stroke-width':3,'circle-stroke-color':'#ffffffcc'}});
+     m3.addLayer({id:'cluster-n',type:'symbol',source:'pts',filter:['has','point_count'],layout:{'text-field':['get','point_count_abbreviated'],'text-font':['Noto Sans Bold'],'text-size':12,'text-allow-overlap':true},paint:{'text-color':'#fff'}});
+     m3.addLayer({id:'pt',type:'circle',source:'pts',filter:['!',['has','point_count']],paint:{'circle-color':['get','color'],'circle-radius':7,'circle-stroke-width':2.5,'circle-stroke-color':'#fff'}});
+     m3.addLayer({id:'sel-ring',type:'circle',source:'pts',filter:['==',['get','id'],-1],paint:{'circle-color':'#f4aa58','circle-radius':20,'circle-opacity':.5,'circle-pitch-alignment':'map','circle-pitch-scale':'map'}},'pt');
+     m3.addLayer({id:'sel',type:'circle',source:'pts',filter:['==',['get','id'],-1],paint:{'circle-color':'#f4aa58','circle-radius':14,'circle-opacity':.35,'circle-stroke-width':3,'circle-stroke-color':'#f4aa58'}},'pt');
+     m3ready=true;
+     m3.on('click','pt',e=>{const r=byId.get(e.features[0].properties.id);if(r){stopSpin();showRecord(r,true);m3.easeTo({center:e.features[0].geometry.coordinates,duration:900});}});
+     m3.on('click','clusters',async e=>{stopSpin();const f=e.features[0];const z=await m3.getSource('pts').getClusterExpansionZoom(f.properties.cluster_id);m3.easeTo({center:f.geometry.coordinates,zoom:z+.5,duration:900});});
+     for(const l of ['pt','clusters']){m3.on('mouseenter',l,()=>m3.getCanvas().style.cursor='pointer');m3.on('mouseleave',l,()=>m3.getCanvas().style.cursor='');}
+     m3.on('mousedown',stopSpin);m3.on('touchstart',stopSpin);m3.on('wheel',stopSpin);
+     intro3d();
+     if(is3d)startAnim();
+   });
+ }
+ async function toggle3d(){
+   const btn=$('mode3d');
+   if(!is3d){
+     btn.disabled=true;btn.textContent='טוען תלת־ממד…';
+     try{if(!m3)await build3d();}
+     catch(e){status('תצוגת התלת־ממד לא נטענה בדפדפן הזה. אפשר להמשיך עם המפה הרגילה.');btn.disabled=false;btn.textContent='תצוגת תלת־ממד';return;}
+     is3d=true;btn.disabled=false;
+     $('map').hidden=true;$('map3d').hidden=false;m3.resize();
+     btn.textContent='חזרה למפה שטוחה';btn.setAttribute('aria-pressed','true');
+     $('rotate3d').hidden=false;$('show-pins').hidden=true;
+     if(m3ready){update3d();home3d(true);startAnim();}
+   }else{
+     is3d=false;stopSpin();animOn=false;$('map3d').hidden=true;$('map').hidden=false;if(map)map.invalidateSize();
+     btn.textContent='תצוגת תלת־ממד';btn.setAttribute('aria-pressed','false');
+     $('rotate3d').hidden=true;$('show-pins').hidden=!map;
+   }
+ }
+ $('mode3d').addEventListener('click',toggle3d);
+ $('rotate3d').addEventListener('click',()=>{spin=!spin;$('rotate3d').setAttribute('aria-pressed',String(spin));if(spin)spinLoop();});
+ $('query').addEventListener('input',render);render();
+});
+</script>
+</body>
+</html>
