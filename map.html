@@ -631,6 +631,7 @@ document.addEventListener('DOMContentLoaded', async () => {
      btn.textContent='חזרה למפה שטוחה';btn.setAttribute('aria-pressed','true');
      $('rotate3d').hidden=false;$('show-pins').hidden=true;
      if(m3ready){update3d();home3d(true);startAnim();}
+     if(window.matchMedia('(max-width: 700px)').matches){const el=$('map3d');el.style.scrollMarginTop='72px';setTimeout(()=>el.scrollIntoView({block:'start',behavior:'smooth'}),80);}
    }else{
      is3d=false;stopSpin();animOn=false;$('map3d').hidden=true;$('map').hidden=false;if(map)map.invalidateSize();
      btn.textContent='תצוגת תלת־ממד';btn.setAttribute('aria-pressed','false');
