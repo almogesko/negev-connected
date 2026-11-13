@@ -352,4 +352,4 @@ footer>span{color:#fff}footer small,footer .photo-credit{color:#b9cdc2}footer a{
 .mapbar #mode3d:disabled{opacity:.7;cursor:wait}
 .mapbar #rotate3d[aria-pressed=true]{background:#cce8e7;color:#0d4449}
 /* 3D sky: visible above the horizon, canvas is transparent there */
-#map3d{background:linear-gradient(180deg,#071b30 0%,#13466b 50%,#5aa6cf 100%)}
+#map3d{background:linear-gradient(180deg,#1b64b8 0%,#4f9fe0 42%,#a9d4f3 78%,#e4f2fc 100%)}
