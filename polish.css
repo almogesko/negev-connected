@@ -346,7 +346,7 @@ footer>span{color:#fff}footer small,footer .photo-credit{color:#b9cdc2}footer a{
 #map,#map3d{height:clamp(540px,calc(100svh - 120px),880px)!important;min-height:540px;flex:1}
 #map3d{direction:ltr;background:#d9e1d6;position:relative}
 #map3d .maplibregl-ctrl-attrib{font-size:11px}
-@media(max-width:700px){#map,#map3d{height:clamp(430px,68svh,620px)!important;min-height:0}}
+@media(max-width:700px){#map,#map3d{height:clamp(430px,68svh,620px)!important;min-height:430px;flex:0 0 auto!important}}
 .mapbar #mode3d{background:#15646a;color:#fff;border-color:#15646a}
 .mapbar #mode3d[aria-pressed=true]{background:#123a50}
 .mapbar #mode3d:disabled{opacity:.7;cursor:wait}
