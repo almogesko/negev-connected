@@ -387,3 +387,29 @@ body,body.directory-page{background:var(--sand)}
 .search:focus-within{border-color:var(--sun);box-shadow:0 0 0 4px #2bd4e633}
 @media(max-width:760px){.intro{border-radius:22px}.intro::before{width:100%;inset:0;opacity:.55;-webkit-mask-image:linear-gradient(to top,transparent 0%,#000 60%);mask-image:linear-gradient(to top,transparent 0%,#000 60%)}}
 @media(prefers-reduced-motion:reduce){.intro::before{animation:none}}
+
+.tech-cv{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;mix-blend-mode:screen}
+
+/* קולאז' תמונות הייטק */
+.hp{position:absolute;inset:0 auto 0 0;width:42%;display:grid;grid-template-rows:1.1fr .8fr 1.3fr;gap:8px;z-index:0;pointer-events:none}
+.intro .hp{z-index:-1;width:36%}
+.hp img{width:100%;height:100%;min-height:0;object-fit:cover;clip-path:polygon(0 0,100% 0,88% 100%,0 100%);filter:saturate(1.05) brightness(.94);animation:hpIn .9s cubic-bezier(.22,1,.36,1) both}
+.hp img:nth-child(2){animation-delay:.15s}.hp img:nth-child(3){animation-delay:.3s}
+@keyframes hpIn{from{opacity:0;transform:translateX(-28px)}}
+@media(max-width:760px){.hp{inset:0 0 auto 0;width:100%;height:30%;grid-template-rows:none;grid-template-columns:repeat(3,1fr)}.hp img{clip-path:none}.intro .hp{height:110px;width:100%}.intro{padding-top:140px}}
+@media(prefers-reduced-motion:reduce){.hp img{animation:none}}
+@media(min-width:761px){.intro::before{inset:0 auto 0 22%;width:46%;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 28%,#000 62%,transparent 100%);mask-image:linear-gradient(to right,transparent 0,#000 28%,#000 62%,transparent 100%)}}
+
+/* פתיח בסגנון ההזמנה: תמונות נקיות בצד, פאנל כהה עם טקסט */
+.intro{background:linear-gradient(160deg,#06122b,#0a2347 60%,#061a33)}
+.intro::before{display:none!important}
+.intro .hp{width:40%}
+.intro .tech-cv{inset:0 0 0 40%;width:60%}
+@media(max-width:760px){.intro .tech-cv{inset:110px 0 0 0;width:100%;height:calc(100% - 110px)}}
+
+/* רקע מכתש תלת־ממדי */
+.cr{position:absolute;inset:0;z-index:0;overflow:hidden;background:#06122b}
+.intro .cr{z-index:-1;border-radius:inherit}
+.cr::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(270deg,rgba(6,18,43,.93) 0%,rgba(6,18,43,.78) 36%,rgba(6,18,43,.18) 72%,transparent 100%),linear-gradient(0deg,rgba(6,18,43,.55),transparent 40%)}
+.intro .tech-cv,#gate .tech-cv{inset:0;width:100%;height:100%}
+@media(max-width:760px){.cr::after{background:linear-gradient(0deg,rgba(6,18,43,.96) 0%,rgba(6,18,43,.8) 45%,rgba(6,18,43,.2) 100%)}.intro .tech-cv{inset:0;height:100%}}
