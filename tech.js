@@ -5,19 +5,10 @@
  var TAGS=[['AI',.12,.20],['סייבר',.30,.12],['מו״פ',.09,.56],['סטארטאפים',.33,.80],['IoT',.46,.42],['Cloud',.52,.66]];
  var CODE=['const negev = connect(partners)','if (idea) build()','0x4E47 · 0xB7','{ innovate: true }','await deploy("beer-sheva")','npm run grow','git commit -m "bridge"','SELECT * FROM opportunities'];
  function seeded(s){return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296}}
-function importCrater(){
-  return Promise.all([0,1,2].map(function(i){return fetch('crater/ep'+i+'.dat').then(function(r){if(!r.ok)throw 0;return r.arrayBuffer()})})).then(function(bufs){
-   var n=bufs.reduce(function(a,b){return a+b.byteLength},0),all=new Uint8Array(n),o=0;
-   bufs.forEach(function(b){all.set(new Uint8Array(b),o);o+=b.byteLength});
-   return new Response(new Blob([all]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
-  }).then(function(src){
-   src=src.replace(/(["'])\.\/([\w.\-]+\.js)\1/g,function(m,q,f){return q+new URL('crater/'+f,document.baseURI).href+q});
-   return import(URL.createObjectURL(new Blob([src],{type:'text/javascript'})));
-  });
- }
- function loadCrater(el){
-  if(!document.getElementById('craterCss')){var l=document.createElement('link');l.id='craterCss';l.rel='stylesheet';l.href='crater/entry.css';document.head.appendChild(l);}
-  importCrater().then(function(m){if(document.contains(el)){m.mount(el,{quality:matchMedia('(pointer: coarse)').matches?'low':undefined});[250,900,2200,3500,5000,7000,9000].forEach(function(d){setTimeout(function(){window.dispatchEvent(new Event('resize'))},d)})}}).catch(function(){});
+function loadCrater(el){
+  var s=document.createElement('script');s.src='heromap.js';
+  s.onload=function(){if(document.contains(el)&&window.NegevHeroMap){window.NegevHeroMap.mount(el).catch(function(){});var c=document.createElement('div');c.className='hero-credit';c.textContent='Imagery © Esri, Maxar · © OpenStreetMap · AWS Terrain Tiles';el.parentNode.appendChild(c)}};
+  document.head.appendChild(s);
  }
  function mount(host){
   if(!host||host.__tech)return;host.__tech=1;
