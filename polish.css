@@ -419,3 +419,25 @@ body,body.directory-page{background:var(--sand)}
 .cr::after{background:linear-gradient(270deg,rgba(14,10,8,.94) 0%,rgba(14,10,8,.78) 36%,rgba(14,10,8,.15) 72%,transparent 100%),linear-gradient(0deg,rgba(14,10,8,.55),transparent 40%)}
 .intro{background:linear-gradient(160deg,#0e0a08,#1b130d)}
 @media(max-width:760px){.cr::after{background:linear-gradient(0deg,rgba(14,10,8,.96) 0%,rgba(14,10,8,.8) 45%,rgba(14,10,8,.2) 100%)}}
+
+/* מקרא, כרטיס וסיור בתלת־ממד */
+#map3d::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(5,8,14,.55) 100%)}
+.leg3{position:absolute;z-index:3;inset-inline:10px;bottom:10px;display:flex;flex-wrap:wrap;gap:6px;direction:rtl;max-height:34%;overflow:auto}
+.leg3-i{font:600 .78rem/1 var(--site-font,Heebo,Arial,sans-serif);display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;border:1px solid #ffffff2e;background:#0b0e14b3;color:#fff;cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.leg3-i[aria-pressed="true"]{background:#fff;color:#10141c;border-color:#fff}
+.leg3-d{width:9px;height:9px;border-radius:50%;display:inline-block}
+.tour3-cap{position:absolute;z-index:3;inset-inline:0;top:16px;margin-inline:auto;width:max-content;max-width:80%;padding:8px 18px;border-radius:999px;background:#0b0e14b3;color:#fff;font:700 1.05rem var(--site-font,Heebo,Arial,sans-serif);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);direction:rtl}
+.pc3-pop .maplibregl-popup-content{padding:12px 14px;border-radius:16px;background:#fff;color:#1d1d1f;box-shadow:0 12px 36px #0006;direction:rtl;font-family:var(--site-font,Heebo,Arial,sans-serif)}
+.pc3-pop .maplibregl-popup-tip{border-top-color:#fff}
+.pc3-top{display:flex;align-items:center;gap:7px;font-size:.78rem;color:#6e6e73;margin-bottom:4px}
+.pc3-dot{width:10px;height:10px;border-radius:50%}
+.pc3-name{display:block;font-size:1.02rem;line-height:1.35}
+.pc3-sub{font-size:.82rem;color:#6e6e73;margin-top:2px}
+.pc3-go{margin-top:10px;width:100%;font:600 .88rem var(--site-font,Heebo,Arial,sans-serif);padding:8px;border:0;border-radius:10px;background:#1d1d1f;color:#fff;cursor:pointer}
+@media(max-width:700px){.leg3{max-height:40%}.leg3-i{font-size:.72rem;padding:6px 9px}}
+.hero-credit{position:absolute;z-index:2;inset-inline-start:12px;bottom:8px;font:11px Heebo,Arial,sans-serif;color:#ffffff8c;pointer-events:none;direction:ltr}
+#gate .hero-credit{inset-inline-start:auto;inset-inline-end:12px}
+
+.leg3{flex-wrap:nowrap!important;overflow-x:auto;overflow-y:hidden;bottom:32px!important;max-height:none!important;scrollbar-width:none;padding-bottom:2px}
+.leg3::-webkit-scrollbar{display:none}
+.leg3-i{flex:0 0 auto;font-size:.72rem!important;padding:6px 10px!important}
