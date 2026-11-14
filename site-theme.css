@@ -1,16 +1,16 @@
 :root {
-  --site-background: #f4f6f1;
+  --site-background: #f6f4f1;
   --site-surface: #fff;
-  --site-ink: #172f28;
-  --site-secondary: #4b6157;
-  --site-line: #dbe4da;
-  --site-forest: #173e33;
-  --site-action: #265b48;
-  --site-tint: #e6f0e7;
-  --site-highlight: #d9ebc0;
-  --site-focus: #956023;
+  --site-ink: #18191d;
+  --site-secondary: #42636a;
+  --site-line: #e6e1d8;
+  --site-forest: #1d1f23;
+  --site-action: #205661;
+  --site-tint: #efece7;
+  --site-highlight: #bce7ef;
+  --site-focus: #117888;
   --site-radius: 16px;
-  --site-shadow: 0 4px 18px #173e330c;
+  --site-shadow: 0 4px 18px #1d1f230c;
   --site-header-height: 60px;
   --site-gutter: clamp(12px, 2vw, 30px);
   --site-font: Arial, "Noto Sans Hebrew", sans-serif;
@@ -70,7 +70,7 @@
   background: var(--site-highlight);
   color: var(--site-forest);
 }
-.site-pages [aria-current="page"]:hover { background: #e7f4d7; }
+.site-pages [aria-current="page"]:hover { background: #ebe7e0; }
 .site-header :focus-visible { outline: 2px solid white; outline-offset: 2px; }
 
 @media (max-width: 360px) {
@@ -97,7 +97,7 @@
 }
 
 .site-primary-action:hover { background: var(--site-forest); }
-.site-primary-action:active { background: #102d25; }
+.site-primary-action:active { background: #151619; }
 
 .site-search-input {
   scroll-margin-block-start: calc(var(--site-header-height) + 14px);
