@@ -353,3 +353,5 @@ footer>span{color:#fff}footer small,footer .photo-credit{color:#b9cdc2}footer a{
 .mapbar #rotate3d[aria-pressed=true]{background:#cce8e7;color:#0d4449}
 /* 3D sky: visible above the horizon, canvas is transparent there */
 #map3d{background:linear-gradient(180deg,#1b64b8 0%,#4f9fe0 42%,#a9d4f3 78%,#e4f2fc 100%)}
+
+#map3d.night{background:radial-gradient(1.5px 1.5px at 12% 18%,#fff,transparent),radial-gradient(1px 1px at 28% 8%,#fffc,transparent),radial-gradient(1.5px 1.5px at 44% 22%,#fff,transparent),radial-gradient(1px 1px at 61% 10%,#fffc,transparent),radial-gradient(1.5px 1.5px at 78% 20%,#fff,transparent),radial-gradient(1px 1px at 90% 6%,#fffc,transparent),radial-gradient(1px 1px at 6% 34%,#fff9,transparent),radial-gradient(1px 1px at 52% 4%,#fff9,transparent),linear-gradient(180deg,#02060d 0%,#071426 48%,#0d2742 100%)}
