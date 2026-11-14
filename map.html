@@ -233,7 +233,7 @@ footer{margin-top:13px}
 </div>
 <div class="mapbar"><div class="mapbuttons">
 <button class="control" id="negev" type="button" aria-label="חזרה לתצוגת הדרום"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg>מבט אזורי</button>
-<button class="control" id="show-pins" type="button" aria-pressed="false">סמנים נפרדים</button><button class="control" id="mode3d" type="button" aria-pressed="false">תצוגת תלת־ממד</button><button class="control" id="rotate3d" type="button" aria-pressed="false" hidden>סיבוב אוטומטי</button><button class="control" id="sky3d" type="button" hidden></button><div class="mobile-actions"><a class="control" href="#results-panel">תוצאות</a><a class="control" href="#results-panel" id="mobile-fund">פילנתרופיה</a></div></div><p id="count" class="count" aria-live="polite"></p></div>
+<button class="control" id="show-pins" type="button" aria-pressed="false">סמנים נפרדים</button><button class="control" id="mode3d" type="button" aria-pressed="false">תצוגת תלת־ממד</button><button class="control" id="rotate3d" type="button" aria-pressed="false" hidden>סיבוב אוטומטי</button><button class="control" id="sky3d" type="button" hidden></button><button class="control" id="tour3d" type="button" aria-pressed="false" hidden>סיור בנגב</button><div class="mobile-actions"><a class="control" href="#results-panel">תוצאות</a><a class="control" href="#results-panel" id="mobile-fund">פילנתרופיה</a></div></div><p id="count" class="count" aria-live="polite"></p></div>
 <div id="map" aria-label="מפת דרום ישראל מאשדוד ועד אילת"><span id="loading">טוען את המפה…</span></div>
 <div id="map3d" hidden aria-label="מפת תלת־ממד של דרום ישראל"></div>
 <p id="map-empty" hidden></p>
@@ -514,7 +514,7 @@ document.addEventListener('DOMContentLoaded', async () => {
  const loadLib=()=>libP||(libP=new Promise((ok,no)=>{
    const l=document.createElement('link');l.rel='stylesheet';l.href='vendor/maplibre-gl.css';document.head.append(l);
    const s=document.createElement('script');s.src='vendor/maplibre-gl.js';s.onload=()=>{try{maplibregl.setRTLTextPlugin('vendor/mapbox-gl-rtl-text.js',false)}catch(e){}ok()};s.onerror=()=>{libP=null;no(new Error('lib'))};document.head.append(s);}));
- function update3d(){if(m3&&m3ready){m3.getSource('pts')?.setData(geo());m3.getSource('beams')?.setData(beams());sel3d();}}
+ function update3d(){if(m3&&m3ready){m3.getSource('pts')?.setData(geo());m3.getSource('beams')?.setData(beams());sel3d();if(m3.getLayer('clusters'))m3.setPaintProperty('clusters','circle-color',labels[selection]&&selection!=='all'?labels[selection][1]:'#15646a');legendState();}}
  function sel3d(){if(m3&&m3ready&&m3.getLayer('sel')){const f=['==',['get','id'],selectedRecord?selectedRecord.id:-1];m3.setFilter('sel',f);m3.setFilter('sel-ring',f);}}
  const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
  let night3d=(()=>{try{return localStorage.getItem('negev-sky')!=='day'}catch(e){return true}})();
@@ -554,9 +554,47 @@ document.addEventListener('DOMContentLoaded', async () => {
  function startAnim(){if(animOn||!m3||!m3ready)return;animOn=true;requestAnimationFrame(animLoop);}
  const beams=()=>({type:'FeatureCollection',features:visible.filter(r=>r.loc).map(r=>{const x=r.loc[1],y=r.loc[0],d=.0013;return{type:'Feature',properties:{color:pinColor(r)},geometry:{type:'Polygon',coordinates:[[[x-d,y-d],[x+d,y-d],[x+d,y+d],[x-d,y+d],[x-d,y-d]]]}}})});
 
+ let card3=null;
+ function pointCard(r,c){
+   if(card3)card3.remove();
+   const box=make('div','pc3');
+   const dot=make('span','pc3-dot');dot.style.background=labels[r.cat]?labels[r.cat][1]:'#15646a';
+   const top=make('div','pc3-top');top.append(dot,make('span','pc3-kind',(labels[r.cat]||['',''])[0]));
+   const ttl=make('strong','pc3-name',r.name);
+   const sub=make('div','pc3-sub',r.locality||r.address||'');
+   const go=make('button','pc3-go','לפרטים מלאים');go.type='button';go.addEventListener('click',()=>{showRecord(r,true);if(card3)card3.remove();});
+   box.append(top,ttl);if(sub.textContent)box.append(sub);box.append(go);
+   card3=new maplibregl.Popup({closeButton:true,offset:16,maxWidth:'260px',className:'pc3-pop'}).setLngLat(c).setDOMContent(box).addTo(m3);
+ }
+ function legend3d(){
+   const host=$('map3d');if(host.querySelector('.leg3'))return;
+   const leg=make('div','leg3');leg.setAttribute('role','group');leg.setAttribute('aria-label','סינון לפי תחום');
+   const all=make('button','leg3-i','הכול');all.type='button';all.dataset.k='all';all.addEventListener('click',()=>choose('all'));leg.append(all);
+   for(const [k,[label,color]] of Object.entries(labels)){
+     if(k==='all')continue;
+     const b=make('button','leg3-i');b.type='button';b.dataset.k=k;
+     const d=make('i','leg3-d');d.style.background=color;b.append(d,document.createTextNode(label));
+     b.addEventListener('click',()=>choose(selection===k?'all':k));leg.append(b);
+   }
+   host.append(leg);legendState();
+ }
+ function legendState(){document.querySelectorAll('#map3d .leg3-i').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.k===selection)));}
+ const TOUR=[['אשדוד',[34.66,31.79],10.8,-25],['באר שבע',[34.79,31.25],11.2,18],['ירוחם והנגב המרכזי',[34.93,30.99],10.8,-32],['מצפה רמון',[34.80,30.61],11.2,28],['אילת והערבה',[34.95,29.56],10.4,-12]];
+ let tourOn=false,tourI=0,tourT=0;
+ function tourCap(t){let c=$('map3d').querySelector('.tour3-cap');if(!c){c=make('div','tour3-cap');$('map3d').append(c);}c.textContent=t||'';c.hidden=!t;}
+ function stopTour(){if(!tourOn)return;tourOn=false;clearTimeout(tourT);tourCap('');$('tour3d').setAttribute('aria-pressed','false');$('tour3d').textContent='סיור בנגב';}
+ function tourStep(){
+   if(!tourOn||!m3)return;
+   const s=TOUR[tourI%TOUR.length];tourI++;tourCap(s[0]);
+   m3.flyTo({center:s[1],zoom:s[2],pitch:62,bearing:s[3],duration:5200,curve:1.4,essential:true});
+   tourT=setTimeout(tourStep,7600);
+ }
+ function startTour(){if(!m3||!m3ready)return;stopSpin();swayOn=false;if(card3)card3.remove();tourOn=true;tourI=0;$('tour3d').setAttribute('aria-pressed','true');$('tour3d').textContent='עצירת הסיור';tourStep();}
+ $('tour3d').addEventListener('click',()=>{tourOn?stopTour():startTour();});
+
  function cloudTex(seed,night){
-   const N=256,d=new Uint8Array(N*N*4);let s=seed;const rnd=()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296};
-   const G=[];for(let o=0;o<4;o++){const n=4<<o,g=new Float32Array(n*n);for(let i=0;i<n*n;i++)g[i]=rnd();G.push([n,g]);}
+   const N=512,d=new Uint8Array(N*N*4);let s=seed;const rnd=()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296};
+   const G=[];for(let o=0;o<5;o++){const n=4<<o,g=new Float32Array(n*n);for(let i=0;i<n*n;i++)g[i]=rnd();G.push([n,g]);}
    const sm=t=>t*t*(3-2*t);
    for(let y=0;y<N;y++)for(let x=0;x<N;x++){
      let v=0,a=.5,tot=0;
@@ -581,9 +619,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 mask:{type:'geojson',data:{type:'Feature',properties:{},geometry:{type:'Polygon',coordinates:[world,hole]}}},
                 border:{type:'geojson',data:{type:'Feature',properties:{},geometry:{type:'LineString',coordinates:edge}}}},
        layers:[{id:'bg',type:'background',paint:{'background-color':night3d?'#06101e':'#1a4a6e'}},
-               {id:'osm',type:'raster',source:'osm',paint:{'raster-saturation':.12,'raster-contrast':.12,'raster-brightness-min':.04}},
-               {id:'hill',type:'hillshade',source:'demhs',paint:{'hillshade-exaggeration':.7,'hillshade-shadow-color':'#2b2014','hillshade-highlight-color':'#fff1cf','hillshade-illumination-direction':305,'hillshade-illumination-anchor':'map'}},
-               {id:'b-glow',type:'line',source:'border',layout:{'line-join':'round'},paint:{'line-color':'#ffffff','line-width':8,'line-blur':7,'line-opacity':.5}},
+               {id:'osm',type:'raster',source:'osm',paint:{'raster-saturation':.16,'raster-contrast':.18,'raster-brightness-min':.03,'raster-resampling':'linear','raster-fade-duration':200}},
+               {id:'hill',type:'hillshade',source:'demhs',paint:{'hillshade-exaggeration':.62,'hillshade-shadow-color':'#2b2014','hillshade-highlight-color':'#fff1cf','hillshade-illumination-direction':305,'hillshade-illumination-anchor':'map'}},
+               {id:'b-glow',type:'line',source:'border',layout:{'line-join':'round'},paint:{'line-color':'#bff6ff','line-width':10,'line-blur':8,'line-opacity':.55}},
                {id:'b-line',type:'line',source:'border',layout:{'line-join':'round'},paint:{'line-color':'#e8f8ff','line-width':1.6}}]}});
    m3.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-right');
    m3.on('error',ev=>{console.debug('3d',ev&&ev.error&&ev.error.message,ev&&ev.sourceId);if(++m3errors===3&&m3ready&&m3.getLayer('cluster-n')){m3.removeLayer('cluster-n');setTimeout(update3d,50);}if(m3errors===3)status('הרקע התלת־ממדי לא נטען במלואו. בתוך עמוד Claude טעינת מפות חיצוניות חסומה, ובאתר מאוחסן הוא נטען. הסמנים עדיין מוצגים.');});
@@ -592,7 +630,7 @@ document.addEventListener('DOMContentLoaded', async () => {
      m3.addImage('cloudA',cloudTex(7,night3d));m3.addImage('cloudB',cloudTex(91,night3d));
      m3.addSource('ofm',{type:'vector',url:'https://tiles.openfreemap.org/planet',attribution:'OpenFreeMap © OpenMapTiles · Data © OpenStreetMap'});
      m3.addLayer({id:'roads',type:'line',source:'ofm','source-layer':'transportation',minzoom:7.5,filter:['match',['get','class'],['motorway','trunk','primary','secondary'],true,false],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':night3d?'#7fe3f0':'#fff4d6','line-opacity':['interpolate',['linear'],['zoom'],7.5,.25,11,.7],'line-width':['interpolate',['linear'],['zoom'],7.5,.6,11,1.6,15,4]}},'b-glow');
-     m3.addSource('pts',{type:'geojson',data:geo(),cluster:true,clusterRadius:42,clusterMaxZoom:10});
+     m3.addSource('pts',{type:'geojson',data:geo(),cluster:true,clusterRadius:30,clusterMaxZoom:10});
      const H=['coalesce',['get','render_height'],7],B=['coalesce',['get','render_min_height'],0];
      m3.addLayer({id:'urban',type:'fill-extrusion',source:'ofm','source-layer':'landuse',minzoom:8.5,maxzoom:14.2,filter:['match',['get','class'],['residential','suburb','neighbourhood','commercial','retail','industrial'],true,false],paint:{
        'fill-extrusion-color':['match',['get','class'],['commercial','retail'],'#e9c79a','industrial','#cfc6ba','#efdcc0'],
@@ -618,10 +656,10 @@ document.addEventListener('DOMContentLoaded', async () => {
      m3.addLayer({id:'sel-ring',type:'circle',source:'pts',filter:['==',['get','id'],-1],paint:{'circle-color':'#f4aa58','circle-radius':20,'circle-opacity':.5,'circle-pitch-alignment':'map','circle-pitch-scale':'map'}},'pt');
      m3.addLayer({id:'sel',type:'circle',source:'pts',filter:['==',['get','id'],-1],paint:{'circle-color':'#f4aa58','circle-radius':14,'circle-opacity':.35,'circle-stroke-width':3,'circle-stroke-color':'#f4aa58'}},'pt');
      m3ready=true;
-     m3.on('click','pt',e=>{const r=byId.get(e.features[0].properties.id);if(r){stopSpin();showRecord(r,true);m3.easeTo({center:e.features[0].geometry.coordinates,zoom:Math.max(m3.getZoom(),14.9),pitch:60,duration:1600});}});
+     m3.on('click','pt',e=>{const r=byId.get(e.features[0].properties.id);if(r){stopSpin();stopTour();pointCard(r,e.features[0].geometry.coordinates);m3.easeTo({center:e.features[0].geometry.coordinates,zoom:Math.max(m3.getZoom(),12.5),pitch:60,duration:1400});}});
      m3.on('click','clusters',async e=>{stopSpin();const f=e.features[0];const z=await m3.getSource('pts').getClusterExpansionZoom(f.properties.cluster_id);m3.easeTo({center:f.geometry.coordinates,zoom:z+.5,duration:900});});
      for(const l of ['pt','clusters']){m3.on('mouseenter',l,()=>m3.getCanvas().style.cursor='pointer');m3.on('mouseleave',l,()=>m3.getCanvas().style.cursor='');}
-     m3.on('mousedown',stopSpin);m3.on('touchstart',stopSpin);m3.on('wheel',stopSpin);
+     m3.on('mousedown',()=>{stopSpin();stopTour()});m3.on('touchstart',()=>{stopSpin();stopTour()});m3.on('wheel',()=>{stopSpin();stopTour()});
      intro3d();
      if(is3d)startAnim();
    });
@@ -635,13 +673,13 @@ document.addEventListener('DOMContentLoaded', async () => {
      is3d=true;btn.disabled=false;
      $('map').hidden=true;$('map3d').hidden=false;m3.resize();
      btn.textContent='חזרה למפה שטוחה';btn.setAttribute('aria-pressed','true');
-     $('rotate3d').hidden=false;$('sky3d').hidden=false;skyLabel();$('show-pins').hidden=true;
+     $('rotate3d').hidden=false;$('sky3d').hidden=false;$('tour3d').hidden=false;legend3d();skyLabel();$('show-pins').hidden=true;
      if(m3ready){update3d();home3d(true);startAnim();}
      if(window.matchMedia('(max-width: 700px)').matches){const el=$('map3d');el.style.scrollMarginTop='72px';setTimeout(()=>el.scrollIntoView({block:'start',behavior:'smooth'}),80);}
    }else{
      is3d=false;stopSpin();animOn=false;$('map3d').hidden=true;$('map').hidden=false;if(map)map.invalidateSize();
      btn.textContent='תצוגת תלת־ממד';btn.setAttribute('aria-pressed','false');
-     $('rotate3d').hidden=true;$('sky3d').hidden=true;$('show-pins').hidden=!map;
+     $('rotate3d').hidden=true;$('sky3d').hidden=true;$('tour3d').hidden=true;stopTour();$('show-pins').hidden=!map;
    }
  }
 function skyLabel(){$('sky3d').textContent=night3d?'מצב יום':'מצב לילה';}
