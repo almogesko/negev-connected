@@ -17,7 +17,7 @@ function importCrater(){
  }
  function loadCrater(el){
   if(!document.getElementById('craterCss')){var l=document.createElement('link');l.id='craterCss';l.rel='stylesheet';l.href='crater/entry.css';document.head.appendChild(l);}
-  importCrater().then(function(m){if(document.contains(el)){m.mount(el,{colors:['#06122b','#f2d9b3','#c2553a','#e9a649'],quality:matchMedia('(pointer: coarse)').matches?'low':undefined});[250,900,2200,3500,5000,7000,9000].forEach(function(d){setTimeout(function(){window.dispatchEvent(new Event('resize'))},d)})}}).catch(function(){});
+  importCrater().then(function(m){if(document.contains(el)){m.mount(el,{quality:matchMedia('(pointer: coarse)').matches?'low':undefined});[250,900,2200,3500,5000,7000,9000].forEach(function(d){setTimeout(function(){window.dispatchEvent(new Event('resize'))},d)})}}).catch(function(){});
  }
  function mount(host){
   if(!host||host.__tech)return;host.__tech=1;
