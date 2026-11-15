@@ -441,3 +441,29 @@ body,body.directory-page{background:var(--sand)}
 .leg3{flex-wrap:nowrap!important;overflow-x:auto;overflow-y:hidden;bottom:32px!important;max-height:none!important;scrollbar-width:none;padding-bottom:2px}
 .leg3::-webkit-scrollbar{display:none}
 .leg3-i{flex:0 0 auto;font-size:.72rem!important;padding:6px 10px!important}
+
+/* ===== גרסת תמונות: קולאז' מדבר/הייטק/מעבדה, פאנל חם בלי כחול ===== */
+.hp{position:absolute;inset:0 auto 0 0;width:44%;display:grid;grid-template-rows:1.15fr .85fr 1.1fr;gap:7px;pointer-events:none}
+.intro .hp{z-index:-1;width:40%}
+.hp img{width:100%;height:100%;min-height:0;object-fit:cover;clip-path:polygon(0 0,100% 0,89% 100%,0 100%);filter:saturate(1.02) contrast(1.03);animation:hpIn .9s cubic-bezier(.22,1,.36,1) both}
+.hp img:nth-child(1){object-position:50% 52%}
+.hp img:nth-child(2){object-position:50% 58%;animation-delay:.15s}
+.hp img:nth-child(3){object-position:50% 28%;animation-delay:.3s}
+.intro{background:linear-gradient(160deg,#0f0c0a,#1b1612)!important}
+.intro::before,.intro .tech-cv,.intro .cr,#gate .tech-cv,#gate .cr{display:none!important}
+.intro .eyebrow{color:#e3a84f}.intro .eyebrow::before{background:#e3a84f}
+.intro h1 em{background:linear-gradient(90deg,#e3a84f,#fff3da);-webkit-background-clip:text;background-clip:text;color:transparent}
+.intro .site-primary-action{background:#e3a84f;color:#1d1408;box-shadow:0 0 28px #e3a84f33}
+.intro .site-primary-action:hover{background:#f0bb68;box-shadow:0 0 40px #e3a84f66}
+.intro .live-dot{background:#e3a84f}
+@media(max-width:760px){.hp{inset:0 0 auto 0;width:100%!important;height:30%;grid-template-rows:none;grid-template-columns:repeat(3,1fr)}.hp img{clip-path:none}.intro .hp{height:110px}}
+
+/* ===== גרסה בהירה: בלי שחור ובלי כחול ===== */
+.intro{background:#fbf8f2!important;color:#1d1d1f!important;box-shadow:0 1px 2px #0000000a,0 14px 40px #3a2a1512}
+.intro h1{color:#1d1d1f!important}
+.intro h1 em{background:linear-gradient(90deg,#b8791f,#e3a84f)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.intro h1+p{color:#5f5f66!important}
+.intro .eyebrow{color:#b8791f!important}.intro .eyebrow::before{background:#b8791f!important}
+.intro-meta{color:#8a8478!important}
+.intro .site-primary-action{color:#1d1408!important;box-shadow:0 8px 22px #e3a84f55!important}
+.hero-credit{color:#6e6e73!important}
