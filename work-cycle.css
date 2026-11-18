@@ -1,11 +1,11 @@
 
   #work-cycle-studio {
-    --background: #1d1f23;
+    --background: #3a2e22;
     --foreground: #f9f8f6;
-    --muted: #204b54;
+    --muted: #514223;
     --muted-foreground: #e5e0d7;
     --border: #5b8891;
-    --primary: #9de0ee;
+    --primary: #ead2a1;
     --viz-series-1: var(--primary);
     font-family: inherit;
   }
