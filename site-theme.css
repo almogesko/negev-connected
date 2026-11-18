@@ -4,13 +4,13 @@
   --site-ink: #18191d;
   --site-secondary: #42636a;
   --site-line: #e6e1d8;
-  --site-forest: #1d1f23;
-  --site-action: #205661;
+  --site-forest: #3a2e22;
+  --site-action: #5e4a23;
   --site-tint: #efece7;
-  --site-highlight: #bce7ef;
-  --site-focus: #117888;
+  --site-highlight: #ecddbf;
+  --site-focus: #825e17;
   --site-radius: 16px;
-  --site-shadow: 0 4px 18px #1d1f230c;
+  --site-shadow: 0 4px 18px #3a2e220c;
   --site-header-height: 60px;
   --site-gutter: clamp(12px, 2vw, 30px);
   --site-font: Arial, "Noto Sans Hebrew", sans-serif;
